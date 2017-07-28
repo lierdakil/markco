@@ -11,7 +11,14 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib, API, Config, Server
+  exposed-modules:     Lib
+                     , API
+                     , Config
+                     , Server
+                     , Utils
+                     , Server.Main
+                     , Server.Static
+                     , Server.Swagger
   build-depends:       base >= 4.7 && < 5
                      , servant-server
                      , pandoc
