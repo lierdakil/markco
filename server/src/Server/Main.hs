@@ -8,6 +8,7 @@ import Text.Pandoc
 import System.FilePath
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
+import qualified Data.Text.Lazy.Encoding as LT
 import qualified Data.Set as S
 import Text.Pandoc.Walk
 import Control.Monad.Reader
@@ -15,6 +16,7 @@ import Config
 import Utils
 import API
 import Servant
+import Control.Monad.Error.Class
 
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
@@ -34,11 +36,15 @@ htmlOpts = def{
   , writerHTMLMathMethod = MathJax ""
   }
 
-getBody :: (MonadReader Config m, MonadIO m) => FilePath -> m Pandoc
+handlePandocError :: (MonadError ServantErr m) => Either PandocError Pandoc -> m Pandoc
+handlePandocError (Left err) = throwError err500{ errBody = LT.encodeUtf8 $ LT.pack $ show err }
+handlePandocError (Right res) = return res
+
+getBody :: (MonadIO m, MonadError ServantErr m, MonadReader Config m) => FilePath -> m Pandoc
 getBody name = do
   dataDirectory <- asks configDataDir
-  either (error . show) id . readMarkdown def
-    <$> liftIO (readFile (dataDirectory </> name </> "index.md"))
+  handlePandocError . readMarkdown def
+    =<< liftIO (readFile (dataDirectory </> name </> "index.md"))
 
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do
@@ -58,9 +64,10 @@ update name chunk mdbody = do
   validateName name
   dataDirectory <- asks configDataDir
   Pandoc meta body <- getBody name
+  validateChunk chunk (length body)
+  Pandoc _ newChunkBody <- handlePandocError $ readMarkdown def $ T.unpack mdbody
   let (b1, _:b2) = splitAt chunk body
       body' = b1 ++ newChunkBody ++ b2
-      Pandoc _ newChunkBody = either (error . show) id $ readMarkdown def $ T.unpack mdbody
   liftIO
     $ writeFile (dataDirectory </> name </> "index.md")
     $ writeMarkdown mdOpts $ Pandoc meta body'
