@@ -1,0 +1,19 @@
+{
+  "name": "markco-client",
+  "main": "./lib/app",
+  "version": "0.0.1",
+  "repository": "https://github.com/lierdakil/markco",
+  "license": "MIT",
+  "dependencies": {
+    "etch": "^0.12.5"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.1",
+    "tsify": "^3.0.1",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.2",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}
