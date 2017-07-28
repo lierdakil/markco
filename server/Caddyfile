@@ -1,0 +1,11 @@
+localhost:2015 {
+  tls off
+  proxy /projects localhost:8081
+  root ../client/dist
+  startup stack exec markco-exe &
+}
+
+localhost:2015/data {
+  tls off
+  root ./data
+}
