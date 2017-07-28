@@ -2,6 +2,8 @@ name:                markco
 version:             0.1.0.0
 homepage:            https://github.com/lierdakil/markco#readme
 license:             MIT
+synopsis:            Collaborative Markdown
+description:         Simple web interface to allow collaborative Markdown workflow
 author:              Nikolay Yakimov
 maintainer:          root@livid.pp.ru
 copyright:           2017 Nikolay Yakimov
@@ -43,7 +45,7 @@ library
 executable markco-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:       base
                      , markco
                      , warp
