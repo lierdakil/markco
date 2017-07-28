@@ -22,28 +22,16 @@ library
   build-depends:       base >= 4.7 && < 5
                      , servant-server
                      , pandoc
-                     , base-compat
                      , mtl
-                     , aeson
-                     , aeson-compat
-                     , attoparsec
                      , bytestring
-                     , string-conversions
-                     , time
-                     , lucid
-                     , http-media
                      , wai
                      , directory
-                     , blaze-markup
                      , blaze-html
                      , pandoc-types
                      , filepath
-                     , servant-blaze
                      , servant-swagger
                      , swagger2
                      , text
-                     , syb
-                     , blaze-markup
                      , servant-options
                      , wai-cors
                      , wai-extra
