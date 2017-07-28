@@ -1,7 +1,10 @@
 module Main where
 
 import Lib
+import Config
 import Network.Wai.Handler.Warp
 
 main :: IO ()
-main = run 8081 app1
+main = do
+  cfg <- readConfigFromEnv
+  run (configPort cfg) (app cfg)
