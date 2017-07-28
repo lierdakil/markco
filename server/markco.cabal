@@ -36,6 +36,7 @@ library
                      , http-types
                      , containers
                      , servant
+                     , bytestring
   default-language:    Haskell2010
   ghc-options:       -Wall
 
