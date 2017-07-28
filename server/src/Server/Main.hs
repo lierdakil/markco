@@ -49,12 +49,9 @@ getBody name = do
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do
   validateName name
-  host <- asks configHost
-  port <- asks configPort
-  schema <- asks configDataSchema
-  let modImgs (Image a t (src, tit)) = Image a t (uri </> "data" </> name </> src, tit)
+  uri <- asks configDataUri
+  let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
-      uri = schema ++ "://" ++ host ++ ":" ++ show port
   Pandoc meta body <- getBody name
   let body' = walk modImgs body
   return $ map (H.renderHtml . writeHtml htmlOpts . Pandoc meta . return) body'
