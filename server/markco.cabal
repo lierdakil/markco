@@ -17,13 +17,11 @@ library
                      , Server
                      , Utils
                      , Server.Main
-                     , Server.Static
                      , Server.Swagger
   build-depends:       base >= 4.7 && < 5
                      , servant-server
                      , pandoc
                      , mtl
-                     , bytestring
                      , wai
                      , directory
                      , blaze-html

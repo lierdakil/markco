@@ -7,7 +7,6 @@ import Servant
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Data.Swagger (Swagger)
-import qualified Data.ByteString as B
 
 type MainAPI = "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String :> "render" :> Get '[JSON] [LT.Text]
@@ -19,11 +18,7 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
            :> Get '[JSON] T.Text
 
 type API = MainAPI
-      :<|> StaticAPI
       :<|> "swagger.json" :> Get '[JSON] Swagger
-
-type StaticAPI =
-      "data" :> Capture "name" String :> Capture "file" String :> Get '[OctetStream] B.ByteString
 
 mainApi :: Proxy MainAPI
 mainApi = Proxy
