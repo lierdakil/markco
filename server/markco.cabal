@@ -2,6 +2,7 @@ name:                markco
 version:             0.1.0.0
 homepage:            https://github.com/lierdakil/markco#readme
 license:             MIT
+license-file:        LICENSE
 synopsis:            Collaborative Markdown
 description:         Simple web interface to allow collaborative Markdown workflow
 author:              Nikolay Yakimov
@@ -10,6 +11,7 @@ copyright:           2017 Nikolay Yakimov
 category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
+extra-source-files:  stack.yaml
 
 library
   hs-source-dirs:      src
