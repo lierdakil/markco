@@ -16,7 +16,7 @@ export interface ChunkState {
 
 export class Chunk extends React.Component<ChunkProps, ChunkState> {
   public refs: {
-    'textarea': HTMLTextAreaElement
+    'textarea': ReactCodeMirror.ReactCodeMirror
     [key: string]: React.ReactInstance
   }
 
@@ -31,17 +31,19 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   public render () {
     return (
       this.state.editMode ?
-      <CodeMirrorReact ref="textarea" value={this.state.src}
-        onFocusChange={this.focusChange.bind(this)}
-        onChange={this.handleChange.bind(this)}
-        options={{
-          theme: 'elegant',
-          mode: 'texmd',
-          lineWrapping: true,
-          autofocus: true,
-          viewportMargin: Infinity,
-        }}
-      /> :
+      <div onPaste={this.imagePaste.bind(this)}>
+        <CodeMirrorReact ref="textarea" value={this.state.src}
+          onFocusChange={this.focusChange.bind(this)}
+          onChange={this.handleChange.bind(this)}
+          options={{
+            theme: 'elegant',
+            mode: 'texmd',
+            lineWrapping: true,
+            autofocus: true,
+            viewportMargin: Infinity,
+          }}
+        />
+      </div> :
       <div className="chunk-container">
         <chunk dangerouslySetInnerHTML={{__html: this.props.content}} />
         <div className="control-btns">
@@ -57,6 +59,22 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
       src: await api.getSource(this.props.projectName, this.props.num),
       editMode: true
     })
+  }
+
+  private async imagePaste (ev: React.ClipboardEvent<HTMLDivElement>) {
+    if (ev.type === 'paste') {
+      const data = ev.nativeEvent.clipboardData
+      const reader = new FileReader()
+      reader.addEventListener('load', async () => {
+        const filename = await api.upload(this.props.projectName, reader.result)
+        const doc = this.refs.textarea.getCodeMirror().getDoc()
+        const cursor = doc.getCursor()
+        doc.replaceRange(`![](${filename})`, cursor)
+      })
+      for (const file of Array.from(data.files)) {
+        reader.readAsArrayBuffer(file)
+      }
+    }
   }
 
   private async delete () {

@@ -15,3 +15,7 @@ export async function getSource (name: string, chunk: number) {
 export async function update (name: string, chunk: number, value: string) {
   return asyncRequest<string[]>('PATCH', `/projects/${name}/update/${chunk}`, value)
 }
+
+export async function upload (name: string, content: ArrayBuffer) {
+  return asyncRequest<string>('POST', `/projects/${name}/upload`, content, 'application/octet-stream')
+}
