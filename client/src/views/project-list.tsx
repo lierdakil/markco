@@ -16,20 +16,20 @@ export class ProjectList extends React.Component<{}, PLState> {
   public render () {
     return (
       <div className="project-list">
-        <ul>
+        <div>
           { this.state.projects.map((prjName) =>
-            <li>
+            <div className="project-list-item">
               <NavLink to={`/docs/${prjName}`}>
                 {prjName}
               </NavLink>
               <div className="control-btns">
                 <button className="btn btn-delete" onClick={async () => this.delete(prjName)} />
               </div>
-            </li>) }
-          <li className="last-project">
+            </div>) }
+          <div className="project-list-item last-project">
             <a onClick={this.create.bind(this)}></a>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     )
   }

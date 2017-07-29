@@ -4,25 +4,23 @@
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 10em;
+  overflow: auto;
 }
-.project-list:only-child > ul {
+.project-list:only-child > div {
   margin-left: auto;
 }
-.project-list > ul {
-  padding: 0;
+.project-list > div {
   margin-right: auto;
   max-width: 25em;
   overflow: hidden;
-  height: 100%;
 }
-.project-list li {
-  list-style: none;
+.project-list .project-list-item {
   font-size: large;
   text-transform: capitalize;
   font-variant: small-caps;
   position: relative;
 }
-.project-list li > a {
+.project-list .project-list-item > a {
   display: block;
   padding: 1em 0.5em;
   border: double 3px green;
@@ -30,14 +28,14 @@
   text-align: center;
   height: 1em;
 }
-.project-list li > a.active {
+.project-list .project-list-item > a.active {
   background-color: lightblue;
 }
-.project-list li.last-project > a {
+.project-list .project-list-item.last-project > a {
   padding: 0;
   height: 3em;
 }
-.project-list li.last-project > a::before {
+.project-list .project-list-item.last-project > a::before {
   content: "+";
   font-weight: 900;
   color: lightgrey;
