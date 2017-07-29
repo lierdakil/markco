@@ -54,6 +54,7 @@ handlePandocError (Right res) = return res
 
 getBody :: (MonadIO m, MonadError ServantErr m, MonadReader Config m) => FilePath -> m Pandoc
 getBody name = do
+  validateName name
   dataDirectory <- asks configDataDir
   everywhere (mkT splitMath) <$> (handlePandocError . readMarkdown def
     =<< liftIO (readFile (dataDirectory </> name </> "index.md")))
@@ -88,11 +89,10 @@ createProject name content = do
 
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do
-  validateName name
+  Pandoc meta body <- getBody name
   uri <- asks configDataUri
   let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
-  Pandoc meta body <- getBody name
   let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks $ walk modImgs body
   return $ map (H.renderHtml . writeHtml htmlOpts . Pandoc meta . return) body'
 
@@ -120,9 +120,8 @@ crossRefSettings =
 
 update :: FilePath -> Int -> T.Text -> ConfigHandler ()
 update name chunk mdbody = do
-  validateName name
-  dataDirectory <- asks configDataDir
   Pandoc meta body <- getBody name
+  dataDirectory <- asks configDataDir
   validateChunk chunk (length body)
   Pandoc _ newChunkBody <- handlePandocError $ readMarkdown def $ T.unpack mdbody
   let (b1, _:b2) = splitAt chunk body
@@ -133,9 +132,8 @@ update name chunk mdbody = do
 
 appendChunk :: FilePath -> T.Text -> ConfigHandler ()
 appendChunk name mdbody = do
-  validateName name
-  dataDirectory <- asks configDataDir
   Pandoc meta body <- getBody name
+  dataDirectory <- asks configDataDir
   Pandoc _ newChunkBody <- handlePandocError $ readMarkdown def $ T.unpack mdbody
   let body' = body ++ newChunkBody
   liftIO
@@ -144,7 +142,6 @@ appendChunk name mdbody = do
 
 getSource :: FilePath -> Int -> ConfigHandler T.Text
 getSource name chunk = do
-  validateName name
   Pandoc meta body <- getBody name
   validateChunk chunk (length body)
   let c = [body !! chunk]
