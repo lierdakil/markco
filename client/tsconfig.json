@@ -18,7 +18,7 @@
         "inlineSources": true,
         "inlineSourceMap": true,
         "strictNullChecks": true,
-        "allowJs": false,
+        "allowJs": true,
         "lib":["dom","es2017"],
         "strict": true
     },

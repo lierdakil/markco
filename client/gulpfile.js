@@ -3,7 +3,11 @@ var browserify = require("browserify");
 var source = require('vinyl-source-stream');
 var tsify = require("tsify");
 var paths = {
-    pages: ['src/*.html']
+    pages: [
+      'src/*.html',
+      'node_modules/codemirror/lib/codemirror.css',
+      'node_modules/codemirror/theme/*.css',
+    ]
 };
 
 gulp.task("copy-html", function () {
