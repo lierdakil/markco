@@ -1,0 +1,11 @@
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto !important;
+}
+#root {
+  width: 21cm;
+  margin: auto;
+}
+#newcommands {
+  visibility: hidden;
+}
