@@ -7,6 +7,7 @@ import qualified Text.Blaze.Html.Renderer.Text as H
 import Text.Pandoc
 import System.FilePath
 import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import qualified Data.Text.Lazy.Encoding as LT
@@ -23,9 +24,11 @@ import Data.Monoid ((<>))
 import Text.Pandoc.Builder
 import Data.Generics
 import Crypto.Hash
+import Data.Char (isAlphaNum)
 
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
+        :<|> createProject
         :<|> render
         :<|> update
         :<|> appendChunk
@@ -72,6 +75,16 @@ splitMath (Para ils:xs)
     isSpace SoftBreak = True
     isSpace _ = False
 splitMath xs = xs
+
+createProject :: FilePath -> T.Text -> ConfigHandler ()
+createProject name content = do
+  projects <- liftIO . listDirectory =<< asks configDataDir
+  when (name `elem` projects) $ throwError err409
+  unless (all isAlphaNum name) $ throwError err400
+  dataDir <- asks configDataDir
+  liftIO $ do
+    createDirectory (dataDir </> name)
+    BL.writeFile (dataDir </> name </> "index.md") $ LT.encodeUtf8 $ LT.fromStrict content
 
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do

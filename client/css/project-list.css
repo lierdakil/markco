@@ -33,3 +33,15 @@
 .project-list li > a.active {
   background-color: lightblue;
 }
+.project-list li.last-project > a {
+  padding: 0;
+  height: 3em;
+}
+.project-list li.last-project > a::before {
+  content: "+";
+  font-weight: 900;
+  color: lightgrey;
+  text-align: center;
+  font-size: 3em;
+  line-height: 1em;
+}

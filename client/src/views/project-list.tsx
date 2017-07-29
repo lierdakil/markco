@@ -23,6 +23,9 @@ export class ProjectList extends React.Component<{}, PLState> {
                 {prjName}
               </NavLink>
             </li>) }
+          <li className="last-project">
+            <a onClick={this.create.bind(this)}></a>
+          </li>
         </ul>
       </div>
     )
@@ -30,5 +33,13 @@ export class ProjectList extends React.Component<{}, PLState> {
 
   public async update () {
     this.setState({ projects: await api.listProjects() })
+  }
+
+  private async create () {
+    const newName = prompt('New project name:')
+    if (newName) {
+      await api.createProject(newName, `# ${newName}\n\nNew project`)
+      this.update()
+    }
   }
 }
