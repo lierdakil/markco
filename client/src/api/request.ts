@@ -21,7 +21,7 @@ export async function asyncRequest<T> (
       xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
       xhr.send(JSON.stringify(body))
     } else if (body != null) {
-      xhr.setRequestHeader('Content-Type', 'application/octet-stream')
+      xhr.setRequestHeader('Content-Type', bodyType)
       xhr.send(body)
     } else {
       xhr.send(null)
