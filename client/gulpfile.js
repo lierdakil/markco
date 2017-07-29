@@ -5,7 +5,7 @@ var concatCss = require('gulp-concat-css');
 var tsify = require("tsify");
 var paths = {
     pages: [
-      'src/*.html',
+      'html/*.html',
     ],
     css: [
       'node_modules/codemirror/lib/codemirror.css',
