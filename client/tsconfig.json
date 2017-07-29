@@ -12,7 +12,6 @@
         "noImplicitUseStrict": false,
         "removeComments": true,
         "noLib": false,
-        "jsxFactory": "etch.dom",
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
         "outDir": "lib",

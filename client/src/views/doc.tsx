@@ -1,31 +1,34 @@
 // tslint:disable: no-unbound-method
-import etch = require('etch')
+import * as React from 'react'
 import {Chunk} from './chunk'
 import * as api from '../api'
 
-export interface DocProps extends JSX.Props {
+export interface DocProps {
   name: string
 }
 
-export class Doc implements JSX.ElementClass {
-  public element: HTMLElement
-  private chunks: string[] = []
-  constructor (public props: DocProps, children?: JSX.Element[]) {
-    etch.initialize(this)
-    this.update(props)
+export interface DocState {
+  chunks: string[]
+}
+
+export class Doc extends React.Component<DocProps, DocState> {
+  constructor (public props: DocProps) {
+    super(props)
   }
 
   public render () {
     return (
       <project>
-        {this.chunks.map((chunk, idx) => <Chunk project={this} content={chunk} num={idx}/>)}
+        {this.state.chunks.map((chunk, idx) => <Chunk project={this} content={chunk} num={idx}/>)}
       </project>
     )
   }
 
-  public async update (props: DocProps, children?: JSX.Element[]) {
-    this.chunks = await api.render(this.props.name)
-    await etch.update(this)
-    if (MathJax) { MathJax.Hub.Queue(['Typeset', MathJax.Hub]) }
+  public componentDidUpdate () {
+    MathJax.Hub && MathJax.Hub.Queue(['Typeset', MathJax.Hub])
+  }
+
+  public async update () {
+    this.setState({chunks: await api.render(this.props.name)})
   }
 }

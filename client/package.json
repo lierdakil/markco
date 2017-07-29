@@ -5,9 +5,13 @@
   "repository": "https://github.com/lierdakil/markco",
   "license": "MIT",
   "dependencies": {
-    "etch": "^0.12.5"
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   },
   "devDependencies": {
+    "@types/mathjax": "0.0.31",
+    "@types/react": "^15.6.0",
+    "@types/react-dom": "^15.5.1",
     "browserify": "^14.4.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.1",
