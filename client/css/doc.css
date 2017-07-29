@@ -8,3 +8,6 @@ doc {
 .chunk-container {
   position: relative;
 }
+doc img {
+  max-width: 100%;
+}
