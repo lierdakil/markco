@@ -17,6 +17,10 @@ import Utils
 import API
 import Servant
 import Control.Monad.Error.Class
+import Text.Pandoc.CrossRef
+import Data.Monoid ((<>))
+import Text.Pandoc.Builder
+import Data.Generics
 
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
@@ -43,8 +47,20 @@ handlePandocError (Right res) = return res
 getBody :: (MonadIO m, MonadError ServantErr m, MonadReader Config m) => FilePath -> m Pandoc
 getBody name = do
   dataDirectory <- asks configDataDir
-  handlePandocError . readMarkdown def
-    =<< liftIO (readFile (dataDirectory </> name </> "index.md"))
+  everywhere (mkT splitMath) <$> (handlePandocError . readMarkdown def
+    =<< liftIO (readFile (dataDirectory </> name </> "index.md")))
+
+splitMath :: [Block] -> [Block]
+splitMath (Para ils:xs)
+  | length ils > 1 = map Para (split [] [] ils) ++ xs
+  where
+    split res acc [] = reverse (reverse acc : res)
+    split res acc (x@(Math DisplayMath _):ys) =
+      split ([x] : reverse (dropSpaces acc) : res)
+            [] (dropSpaces ys)
+    split res acc (y:ys) = split res (y:acc) ys
+    dropSpaces = dropWhile (\x -> x == Space || x == SoftBreak)
+splitMath xs = xs
 
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do
@@ -53,8 +69,29 @@ render name = do
   let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
   Pandoc meta body <- getBody name
-  let body' = walk modImgs body
+  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks $ walk modImgs body
   return $ map (H.renderHtml . writeHtml htmlOpts . Pandoc meta . return) body'
+
+crossRefSettings :: Meta
+crossRefSettings =
+     chapters True
+  <> numberSections True
+  <> sectionsDepth "3"
+  <> chaptersDepth "1"
+  <> figureTitle (str "Рисунок")
+  <> tableTitle (str "Таблица")
+  <> listingTitle (str "Листинг")
+  <> figPrefix [str "рис."]
+  <> eqnPrefix [str "ур."]
+  <> tblPrefix [str "табл."]
+  <> lstPrefix [str "лист."]
+  <> secPrefix [str "разд."]
+  <> lofTitle (header 1 $ text "Список рисунков")
+  <> lotTitle (header 1 $ text "Список таблиц")
+  <> lolTitle (header 1 $ text "Список листингов")
+  -- <> autoEqnLabels True
+  <> subfigGrid True
+  <> linkReferences True
 
 update :: FilePath -> Int -> T.Text -> ConfigHandler ()
 update name chunk mdbody = do
