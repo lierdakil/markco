@@ -100,8 +100,10 @@ render name = do
   uri <- asks configDataUri
   let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
-  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks $ walk modImgs body
+  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks . wrapDiv $ walk modImgs body
   return $ map (H.renderHtml . writeHtml htmlOpts . Pandoc meta . return) body'
+  where
+    wrapDiv = map (Div nullAttr . return)
 
 crossRefSettings :: Meta
 crossRefSettings =
