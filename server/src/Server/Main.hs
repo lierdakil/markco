@@ -82,7 +82,7 @@ crossRefSettings =
   <> tableTitle (str "Таблица")
   <> listingTitle (str "Листинг")
   <> figPrefix [str "рис."]
-  <> eqnPrefix [str "ур."]
+  <> eqnPrefixTemplate (str "(" <> var "i" <> str ")")
   <> tblPrefix [str "табл."]
   <> lstPrefix [str "лист."]
   <> secPrefix [str "разд."]
@@ -92,6 +92,7 @@ crossRefSettings =
   -- <> autoEqnLabels True
   <> subfigGrid True
   <> linkReferences True
+  where var = displayMath
 
 update :: FilePath -> Int -> T.Text -> ConfigHandler ()
 update name chunk mdbody = do
