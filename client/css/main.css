@@ -2,80 +2,11 @@
   border: 1px solid #eee;
   height: auto !important;
 }
-#root {
-  position: relative;
-}
 #newcommands {
   visibility: hidden;
 }
-doc {
-  width: 21cm;
-  margin: auto;
-  display: block;
-}
-doc + .project-list {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  overflow: auto;
-}
-doc + .project-list > ul {
-  margin: 2em 1em;
-  padding: 0;
-}
-.project-list {
-  padding-top: 2em;
-  width: 13em;
-  padding: 0;
-  margin: auto;
-}
-.project-list li {
-  list-style: none;
-  font-size: large;
-  text-transform: capitalize;
-  font-variant: small-caps;
-}
-.project-list li > a {
-  display: block;
-  padding: 1em 0.5em;
-  border: double 3px green;
-  border-radius: 2em;
-  text-align: center;
-}
-.project-list li > a.active {
-  background-color: lightblue;
-}
-.chunk-container {
+.container {
   position: relative;
-}
-.chunk-container:hover .control-btns {
-  visibility: visible;
-}
-.control-btns {
-  padding: 0;
-  height: 1.3em;
-  position: absolute;
-  top: 0;
-  line-height: 0;
-  visibility: hidden;
-}
-.btn {
-  height: 1.3em;
-  width: 1.3em;
-  margin: 0;
-  padding: 0;
-}
-.btn-edit::before {
-  content: "🖉";
-}
-.btn-delete::before {
-  content: "✘";
-  color: maroon;
-}
-.btn-insertBefore::before {
-  content: "🡅";
-}
-.btn-insertAfter::before {
-  content: "🡇";
+  display: flex;
+  flex-flow: row nowrap;
 }

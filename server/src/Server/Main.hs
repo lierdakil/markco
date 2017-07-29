@@ -29,6 +29,7 @@ mainServer = listProjects
         :<|> render
         :<|> update
         :<|> getSource
+        :<|> fileList
 
 mdOpts :: WriterOptions
 mdOpts = def {
@@ -135,3 +136,15 @@ uploadFile name content = do
   let filename = show (hash content :: Digest SHA1)
   liftIO $ B.writeFile (dataDirectory </> name </> filename) content
   return $ T.pack filename
+
+fileList :: FilePath -> ConfigHandler [FileInfo]
+fileList name = do
+  validateName name
+  dataDirectory <- asks configDataDir
+  uriBase <- asks configDataUri
+  map (mkFI uriBase) . filter (/= "index.md") <$> liftIO (listDirectory (dataDirectory </> name))
+  where
+    mkFI uriBase fn = FileInfo {
+        fileName = T.pack fn
+      , fileURI = T.pack $ uriBase </> name </> fn
+      }

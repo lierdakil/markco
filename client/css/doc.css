@@ -1,0 +1,10 @@
+doc {
+  width: 21cm;
+  margin: 0 auto;
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.chunk-container {
+  position: relative;
+}

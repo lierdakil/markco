@@ -1,0 +1,29 @@
+.project-list {
+  padding: 0;
+  margin: 0 1em;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 10em;
+  min-width: 10em;
+  max-width: 21cm;
+}
+.project-list > ul {
+  padding: 0;
+  margin: auto;
+}
+.project-list li {
+  list-style: none;
+  font-size: large;
+  text-transform: capitalize;
+  font-variant: small-caps;
+}
+.project-list li > a {
+  display: block;
+  padding: 1em 0.5em;
+  border: double 3px green;
+  border-radius: 2em;
+  text-align: center;
+}
+.project-list li > a.active {
+  background-color: lightblue;
+}

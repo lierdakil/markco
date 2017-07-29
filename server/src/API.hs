@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module API where
 
@@ -7,7 +8,17 @@ import Servant
 import qualified Data.ByteString as B
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
-import Data.Swagger (Swagger)
+import Data.Swagger (Swagger, ToSchema)
+import GHC.Generics
+import Data.Aeson
+
+data FileInfo = FileInfo {
+    fileName :: T.Text
+  , fileURI :: T.Text
+  } deriving (Generic)
+
+instance ToJSON FileInfo
+instance ToSchema FileInfo
 
 type MainAPI = "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String :> "render" :> Get '[JSON] [LT.Text]
@@ -17,6 +28,8 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String
            :> "source" :> Capture "chunk" Int
            :> Get '[JSON] T.Text
+      :<|> "projects" :> Capture "name" String
+           :> "files" :> Get '[JSON] [FileInfo]
 
 type API = MainAPI
       :<|> "projects" :> Capture "name" String

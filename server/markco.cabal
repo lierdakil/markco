@@ -44,6 +44,7 @@ library
                      , pandoc-crossref
                      , syb
                      , cryptonite
+                     , aeson
   default-language:    Haskell2010
   ghc-options:       -Wall
 

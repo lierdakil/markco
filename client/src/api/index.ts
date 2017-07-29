@@ -19,3 +19,12 @@ export async function update (name: string, chunk: number, value: string) {
 export async function upload (name: string, content: ArrayBuffer) {
   return asyncRequest<string>('POST', `/projects/${name}/upload`, content, 'application/octet-stream')
 }
+
+export interface FileInfo {
+  fileName: string
+  fileURI: string
+}
+
+export async function fileList (name: string) {
+  return asyncRequest<FileInfo[]>('GET', `/projects/${name}/files`)
+}
