@@ -1,4 +1,4 @@
-div:hover > .control-btns {
+*:hover > .control-btns {
   visibility: visible;
 }
 .control-btns {
