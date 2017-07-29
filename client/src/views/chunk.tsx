@@ -44,7 +44,9 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           }}
         />
       </div> :
-      <div className="chunk-container">
+      <div className="chunk-container"
+           onDragOver={this.dragOver.bind(this)}
+           onDrop={this.dropOnChunk.bind(this)}>
         <chunk dangerouslySetInnerHTML={{__html: this.props.content}} />
         <div className="control-btns">
           <button className="btn btn-edit" onClick={this.edit.bind(this)} />
@@ -102,5 +104,22 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
 
   private handleChange (value: string) {
     this.setState({src: value})
+  }
+
+  private dragOver (ev: React.DragEvent<HTMLDivElement>) {
+    const data: {fileName?: string} | undefined
+      = JSON.parse(ev.dataTransfer.getData('application/json'))
+    if (data && data.fileName) {
+      ev.preventDefault()
+    }
+  }
+
+  private async dropOnChunk (ev: React.DragEvent<HTMLDivElement>) {
+    const data: {fileName?: string} | undefined
+      = JSON.parse(ev.dataTransfer.getData('application/json'))
+    if (data && data.fileName) {
+      const src = await api.getSource(this.props.projectName, this.props.num)
+      await this.update(`${src}\n\n![](${data.fileName})`)
+    }
   }
 }

@@ -23,7 +23,15 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
       <div className="file-list">
         <div>
           {this.state.files.map(({fileName, fileURI}) =>
-            <div className="file-list-item" style={{'background-image': `url(${fileURI})`}} data-file={fileName}>
+            <div className="file-list-item"
+                 style={{'background-image': `url(${fileURI})`}}
+                 draggable={true}
+                 onDragStart={(ev) => {
+                   ev.dataTransfer.setData(
+                     'application/json', JSON.stringify({fileName})
+                   )
+                 }}
+                 >
               <div className="control-btns">
                 <button className="btn btn-delete" onClick={async () => this.delete(fileName)} />
               </div>
