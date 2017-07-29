@@ -14,16 +14,22 @@
     width: 21cm;
     margin: auto;
   }
+  #newcommands {
+    visibility: hidden;
+  }
   </style>
 </head>
 <body>
-  $$
-  \newcommand{\pars}[1]{\left(#1\right)}
-  \newcommand{\ddt}[1]{\frac{\partial #1}{\partial t}}
-  \newcommand{\d}{\mathrm{d}}
-  \newcommand{\arctg}{\mathrm{arctg}}
-  \newcommand{\tg}{\mathrm{tg}}
-  $$
+  <div id="newcommands">
+    $$
+    \newcommand{\pars}[1]{\left(#1\right)}
+    \newcommand{\ddt}[1]{\frac{\partial #1}{\partial t}}
+    \newcommand{\d}{\mathrm{d}}
+    \newcommand{\arctg}{\mathrm{arctg}}
+    \newcommand{\tg}{\mathrm{tg}}
+    $$
+  </div>
+  <div id="root"></div>
   <script type="text/javascript" src="./app.js" async></script>
 </body>
 </html>

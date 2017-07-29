@@ -14,6 +14,8 @@ export interface DocState {
 export class Doc extends React.Component<DocProps, DocState> {
   constructor (public props: DocProps) {
     super(props)
+    this.state = { chunks: [] }
+    this.update()
   }
 
   public render () {

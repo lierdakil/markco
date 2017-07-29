@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom'
 async function init () {
   ReactDOM.render(
     <Doc name="project"/>,
-    document.body
+    document.getElementById('root')
   )
 }
 

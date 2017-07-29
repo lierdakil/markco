@@ -20,9 +20,11 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   }
 
   constructor (props: ChunkProps) {
-    super(props);
-    (this.state as any).editMode = false;
-    (this.state as any).src = ''
+    super(props)
+    this.state = {
+      editMode: false,
+      src: ''
+    }
   }
 
   public render () {
@@ -30,7 +32,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
       this.state.editMode ?
       <textarea ref="textarea" value={this.state.src}
         onBlur={this.blur.bind(this)}
-        onKeyUp={this.keyup.bind(this)}
+        onChange={this.handleChange.bind(this)}
       /> :
       <chunk dangerouslySetInnerHTML={{__html: this.props.content}}
              onDoubleClick={this.edit.bind(this)}
@@ -44,7 +46,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
       editMode: true
     })
     this.refs.textarea.focus()
-    this.keyup()
+    this.resizeTextArea()
   }
 
   private async blur () {
@@ -56,7 +58,12 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     this.props.project.update()
   }
 
-  private async keyup () {
+  private handleChange (event: React.ChangeEvent<HTMLTextAreaElement>) {
+    this.resizeTextArea()
+    this.setState({src: event.target.value})
+  }
+
+  private resizeTextArea () {
     const str: string = this.refs.textarea.value
     const cols: number = this.refs.textarea.cols = 80
     const linecount = str.split('\n').reduce((p, l) => p + 1 + Math.floor( l.length / cols ), 0)
