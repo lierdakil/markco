@@ -20,7 +20,7 @@ export class Doc extends React.Component<RouteComponentProps<DocProps>, DocState
 
   public render () {
     return (
-      <project>
+      <doc>
         {this.state.chunks.map((chunk, idx) =>
           <Chunk
             projectName={this.props.match.params.name}
@@ -28,7 +28,7 @@ export class Doc extends React.Component<RouteComponentProps<DocProps>, DocState
             num={idx}
             onUpdated={this.update.bind(this)}
             />)}
-      </project>
+      </doc>
     )
   }
 

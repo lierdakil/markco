@@ -42,9 +42,13 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           viewportMargin: Infinity,
         }}
       /> :
-      <chunk dangerouslySetInnerHTML={{__html: this.props.content}}
-             onDoubleClick={this.edit.bind(this)}
-      />
+      <div className="chunk-container">
+        <chunk dangerouslySetInnerHTML={{__html: this.props.content}} />
+        <div className="control-btns">
+          <button className="btn btn-edit" onClick={this.edit.bind(this)} />
+          <button className="btn btn-delete" onClick={this.delete.bind(this)} />
+        </div>
+      </div>
     )
   }
 
@@ -55,13 +59,23 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     })
   }
 
+  private async delete () {
+    if (confirm('You sure you want to delete?') === true) {
+      this.update('')
+    }
+  }
+
+  private async update (content = this.state.src) {
+    await api.update(
+      this.props.projectName, this.props.num, content
+    )
+    this.props.onUpdated()
+  }
+
   private async focusChange (focused: boolean) {
     if (!focused && this.state.editMode) {
-      await api.update(
-        this.props.projectName, this.props.num, this.state.src
-      )
+      this.update()
       this.setState({editMode: false})
-      this.props.onUpdated()
     }
   }
 

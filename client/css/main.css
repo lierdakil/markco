@@ -8,19 +8,19 @@
 #newcommands {
   visibility: hidden;
 }
-project {
+doc {
   width: 21cm;
   margin: auto;
   display: block;
 }
-project + .project-list {
+doc + .project-list {
   position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
   overflow: auto;
 }
-project + .project-list > ul {
+doc + .project-list > ul {
   margin: 2em 1em;
   padding: 0;
 }
@@ -45,4 +45,37 @@ project + .project-list > ul {
 }
 .project-list li > a.active {
   background-color: lightblue;
+}
+.chunk-container {
+  position: relative;
+}
+.chunk-container:hover .control-btns {
+  visibility: visible;
+}
+.control-btns {
+  padding: 0;
+  height: 1.3em;
+  position: absolute;
+  top: 0;
+  line-height: 0;
+  visibility: hidden;
+}
+.btn {
+  height: 1.3em;
+  width: 1.3em;
+  margin: 0;
+  padding: 0;
+}
+.btn-edit::before {
+  content: "🖉";
+}
+.btn-delete::before {
+  content: "✘";
+  color: maroon;
+}
+.btn-insertBefore::before {
+  content: "🡅";
+}
+.btn-insertAfter::before {
+  content: "🡇";
 }
