@@ -65,14 +65,17 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     if (ev.type === 'paste') {
       const data = ev.nativeEvent.clipboardData
       const reader = new FileReader()
-      reader.addEventListener('load', async () => {
-        const filename = await api.upload(this.props.projectName, reader.result)
-        const doc = this.refs.textarea.getCodeMirror().getDoc()
-        const cursor = doc.getCursor()
-        doc.replaceRange(`![](${filename})`, cursor)
-      })
       for (const file of Array.from(data.files)) {
         reader.readAsArrayBuffer(file)
+        await new Promise((resolve) => {
+          reader.onload = async () => {
+            const filename = await api.upload(this.props.projectName, reader.result)
+            const doc = this.refs.textarea.getCodeMirror().getDoc()
+            const cursor = doc.getCursor()
+            doc.replaceRange(`![](${filename})`, cursor)
+          }
+          reader.onloadend = () => resolve()
+        })
       }
     }
   }
