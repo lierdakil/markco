@@ -29,6 +29,7 @@ import Data.Char (isAlphaNum)
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
         :<|> createProject
+        :<|> deleteProject
         :<|> render
         :<|> update
         :<|> appendChunk
@@ -86,6 +87,12 @@ createProject name content = do
   liftIO $ do
     createDirectory (dataDir </> name)
     BL.writeFile (dataDir </> name </> "index.md") $ LT.encodeUtf8 $ LT.fromStrict content
+
+deleteProject :: FilePath -> ConfigHandler ()
+deleteProject name = do
+  validateName name
+  dataDir <- asks configDataDir
+  liftIO $ removeDirectoryRecursive (dataDir </> name)
 
 render :: FilePath -> ConfigHandler [LT.Text]
 render name = do

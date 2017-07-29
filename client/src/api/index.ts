@@ -8,6 +8,10 @@ export async function createProject (name: string, content: string) {
   return asyncRequest<void>('POST', `/projects/${name}`, content)
 }
 
+export async function deleteProject (name: string) {
+  return asyncRequest<void>('DELETE', `/projects/${name}`)
+}
+
 export async function render (name: string) {
   return asyncRequest<string[]>('GET', `/projects/${name}`)
 }

@@ -22,6 +22,9 @@ export class ProjectList extends React.Component<{}, PLState> {
               <NavLink to={`/docs/${prjName}`}>
                 {prjName}
               </NavLink>
+              <div className="control-btns">
+                <button className="btn btn-delete" onClick={async () => this.delete(prjName)} />
+              </div>
             </li>) }
           <li className="last-project">
             <a onClick={this.create.bind(this)}></a>
@@ -39,6 +42,13 @@ export class ProjectList extends React.Component<{}, PLState> {
     const newName = prompt('New project name:')
     if (newName) {
       await api.createProject(newName, `# ${newName}\n\nNew project`)
+      this.update()
+    }
+  }
+
+  private async delete (name: string) {
+    if (confirm('You sure you want to delete?') === true) {
+      await api.deleteProject(name)
       this.update()
     }
   }

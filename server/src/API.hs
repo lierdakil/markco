@@ -23,6 +23,7 @@ instance ToSchema FileInfo
 type MainAPI = "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String
            :> ReqBody '[JSON] T.Text :> Post '[JSON] ()
+      :<|> "projects" :> Capture "name" String :> Delete '[JSON] ()
       :<|> "projects" :> Capture "name" String :> Get '[JSON] [LT.Text]
       :<|> "projects" :> Capture "name" String
            :> Capture "chunk" Int
