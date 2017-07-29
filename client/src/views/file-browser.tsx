@@ -28,7 +28,7 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
                  draggable={true}
                  onDragStart={(ev) => {
                    ev.dataTransfer.setData(
-                     'application/json', JSON.stringify({fileName})
+                     'application/x-filename', fileName
                    )
                  }}
                  >

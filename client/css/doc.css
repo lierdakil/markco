@@ -8,6 +8,9 @@ doc {
 .chunk-container {
   position: relative;
 }
+.drag-hover {
+  background-color: lightgreen;
+}
 doc img {
   max-width: 100%;
 }

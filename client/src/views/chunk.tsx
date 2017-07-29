@@ -11,6 +11,7 @@ export interface ChunkProps {
 
 export interface ChunkState {
   editMode: boolean
+  dragHover: boolean
   src: string
 }
 
@@ -24,6 +25,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     super(props)
     this.state = {
       editMode: false,
+      dragHover: false,
       src: ''
     }
   }
@@ -44,7 +46,9 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           }}
         />
       </div> :
-      <div className="chunk-container"
+      <div className={`chunk-container${this.state.dragHover ? ' drag-hover' : ''}`}
+           onDragEnter={this.dragEnter.bind(this)}
+           onDragLeave={this.dragLeave.bind(this)}
            onDragOver={this.dragOver.bind(this)}
            onDrop={this.dropOnChunk.bind(this)}>
         <chunk dangerouslySetInnerHTML={{__html: this.props.content}} />
@@ -106,20 +110,39 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     this.setState({src: value})
   }
 
+  private withDragData<T> (
+    ev: React.DragEvent<HTMLDivElement>,
+    func: (fileName: string) => T
+  ): T | undefined {
+    if (ev.dataTransfer.types.includes('application/x-filename')) {
+      return func(ev.dataTransfer.getData('application/x-filename'))
+    }
+  }
+
   private dragOver (ev: React.DragEvent<HTMLDivElement>) {
-    const data: {fileName?: string} | undefined
-      = JSON.parse(ev.dataTransfer.getData('application/json'))
-    if (data && data.fileName) {
+    this.withDragData(ev, () => {
       ev.preventDefault()
+    })
+  }
+
+  private dragEnter (ev: React.DragEvent<HTMLDivElement>) {
+    this.withDragData(ev, () => {
+      this.setState({ dragHover: true })
+      ev.preventDefault()
+    })
+  }
+
+  private dragLeave () {
+    if (this.state.dragHover) {
+      this.setState({ dragHover: false })
     }
   }
 
   private async dropOnChunk (ev: React.DragEvent<HTMLDivElement>) {
-    const data: {fileName?: string} | undefined
-      = JSON.parse(ev.dataTransfer.getData('application/json'))
-    if (data && data.fileName) {
+    this.withDragData(ev, async (fileName) => {
       const src = await api.getSource(this.props.projectName, this.props.num)
-      await this.update(`${src}\n\n![](${data.fileName})`)
-    }
+      await this.update(`${src}\n\n![](${fileName})`)
+      this.setState({ dragHover: false })
+    })
   }
 }
