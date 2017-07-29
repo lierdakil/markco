@@ -9,7 +9,6 @@
 .file-list > div {
   max-width: 21cm;
   margin-left: auto;
-  overflow: hidden;
   display: flex;
   flex-flow: row wrap;
 }
@@ -22,6 +21,7 @@
   border: solid 2px;
   flex-grow: 0;
   flex-shrink: 0;
+  overflow: hidden;
 }
 .file-list-dropzone {
   border-style: dashed;

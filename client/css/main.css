@@ -3,10 +3,18 @@
   height: auto !important;
 }
 #newcommands {
-  visibility: hidden;
+  display: none;
 }
 .container {
   position: relative;
   display: flex;
   flex-flow: row nowrap;
+  height: 100vh;
+}
+.container > * {
+  max-height: 100vh;
+  overflow: auto;
+}
+body {
+  margin: 0;
 }
