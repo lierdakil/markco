@@ -28,3 +28,7 @@ export interface FileInfo {
 export async function fileList (name: string) {
   return asyncRequest<FileInfo[]>('GET', `/projects/${name}/files`)
 }
+
+export async function deleteFile (name: string, file: string) {
+  return asyncRequest<string>('DELETE', `/projects/${name}/files/${file}`)
+}

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import * as api from '../api'
+import Dropzone = require('react-dropzone')
 
 export interface DocProps {
   name: string
@@ -20,9 +21,16 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
   public render () {
     return (
       <div className="file-list">
-        {this.state.files.map(({fileName, fileURI}) =>
-          <div className="file-list-item" style={{background: `url(${fileURI})`}} data-file={fileName} />
-        )}
+        <div>
+          {this.state.files.map(({fileName, fileURI}) =>
+            <div className="file-list-item" style={{'background-image': `url(${fileURI})`}} data-file={fileName}>
+              <div className="control-btns">
+                <button className="btn btn-delete" onClick={async () => this.delete(fileName)} />
+              </div>
+            </div>
+          )}
+          <Dropzone className="file-list-item file-list-dropzone" onDrop={this.drop.bind(this)}/>
+        </div>
       </div>
     )
   }
@@ -39,5 +47,26 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
 
   public async update (name = this.props.match.params.name) {
     this.setState({files: await api.fileList(name)})
+  }
+
+  private async drop (files: Dropzone.ImageFile[]) {
+    if (files.length === 0) { return }
+    const reader = new FileReader()
+    for (const file of files) {
+      reader.readAsArrayBuffer(file)
+      await new Promise((resolve, reject) => {
+        reader.onload = async () => resolve(api.upload(this.props.match.params.name, reader.result))
+        reader.onabort = (ev) => reject(ev)
+        reader.onerror = (ev) => reject(ev)
+      })
+    }
+    this.update()
+  }
+
+  private async delete (fileName: string) {
+    if (confirm('You sure you want to delete?') === true) {
+      await api.deleteFile(this.props.match.params.name, fileName)
+      this.update()
+    }
   }
 }
