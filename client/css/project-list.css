@@ -5,11 +5,11 @@
   flex-shrink: 1;
   flex-basis: 10em;
   min-width: 10em;
-  max-width: 21cm;
 }
 .project-list > ul {
   padding: 0;
-  margin: auto;
+  margin-right: auto;
+  max-width: 25em;
 }
 .project-list li {
   list-style: none;
