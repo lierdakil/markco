@@ -26,6 +26,8 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
            :> Capture "chunk" Int
            :> ReqBody '[JSON] T.Text :> Patch '[JSON] ()
       :<|> "projects" :> Capture "name" String
+           :> ReqBody '[JSON] T.Text :> Patch '[JSON] ()
+      :<|> "projects" :> Capture "name" String
            :> Capture "chunk" Int
            :> Get '[JSON] T.Text
       :<|> "projects" :> Capture "name" String

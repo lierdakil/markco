@@ -28,6 +28,7 @@ mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
         :<|> render
         :<|> update
+        :<|> appendChunk
         :<|> getSource
         :<|> fileList
         :<|> deleteFile
@@ -113,6 +114,17 @@ update name chunk mdbody = do
   Pandoc _ newChunkBody <- handlePandocError $ readMarkdown def $ T.unpack mdbody
   let (b1, _:b2) = splitAt chunk body
       body' = b1 ++ newChunkBody ++ b2
+  liftIO
+    $ writeFile (dataDirectory </> name </> "index.md")
+    $ writeMarkdown mdOpts $ Pandoc meta body'
+
+appendChunk :: FilePath -> T.Text -> ConfigHandler ()
+appendChunk name mdbody = do
+  validateName name
+  dataDirectory <- asks configDataDir
+  Pandoc meta body <- getBody name
+  Pandoc _ newChunkBody <- handlePandocError $ readMarkdown def $ T.unpack mdbody
+  let body' = body ++ newChunkBody
   liftIO
     $ writeFile (dataDirectory </> name </> "index.md")
     $ writeMarkdown mdOpts $ Pandoc meta body'

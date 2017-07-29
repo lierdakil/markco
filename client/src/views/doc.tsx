@@ -28,6 +28,11 @@ export class Doc extends React.Component<RouteComponentProps<DocProps>, DocState
             num={idx}
             onUpdated={this.update.bind(this)}
             />)}
+        <Chunk
+          projectName={this.props.match.params.name}
+          content={''}
+          onUpdated={this.update.bind(this)}
+          />
       </doc>
     )
   }

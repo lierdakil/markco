@@ -8,6 +8,18 @@ doc {
 .chunk-container {
   position: relative;
 }
+.last-chunk {
+  min-height: 3em;
+}
+.last-chunk chunk::before {
+  content: "+";
+  font-weight: 900;
+  font-size: 3em;
+  line-height: 1em;
+  color: lightgrey;
+  display: block;
+  text-align: center;
+}
 .drag-hover {
   background-color: lightgreen;
 }

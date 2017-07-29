@@ -4,7 +4,7 @@ import * as api from '../api'
 
 export interface ChunkProps {
   content: string
-  num: number
+  num?: number
   projectName: string
   onUpdated: () => void
 }
@@ -31,6 +31,9 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   }
 
   public render () {
+    const classes = ['chunk-container']
+    this.state.dragHover && classes.push('drag-hover')
+    this.props.num === undefined && classes.push('last-chunk')
     return (
       this.state.editMode ?
       <div onPaste={this.imagePaste.bind(this)}>
@@ -46,7 +49,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           }}
         />
       </div> :
-      <div className={`chunk-container${this.state.dragHover ? ' drag-hover' : ''}`}
+      <div className={classes.join(' ')}
            onDragEnter={this.dragEnter.bind(this)}
            onDragLeave={this.dragLeave.bind(this)}
            onDragOver={this.dragOver.bind(this)}
@@ -60,9 +63,15 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     )
   }
 
+  private async getSrc () {
+    return this.props.num
+      ? await api.getSource(this.props.projectName, this.props.num)
+      : ''
+  }
+
   private async edit () {
     this.setState({
-      src: await api.getSource(this.props.projectName, this.props.num),
+      src: await this.getSrc(),
       editMode: true
     })
   }
@@ -93,9 +102,9 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   }
 
   private async update (content = this.state.src) {
-    await api.update(
-      this.props.projectName, this.props.num, content
-    )
+    this.props.num !== undefined
+    ? await api.update(this.props.projectName, this.props.num, content)
+    : await api.appendChunk(this.props.projectName, content)
     this.props.onUpdated()
   }
 
@@ -140,8 +149,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
 
   private async dropOnChunk (ev: React.DragEvent<HTMLDivElement>) {
     this.withDragData(ev, async (fileName) => {
-      const src = await api.getSource(this.props.projectName, this.props.num)
-      await this.update(`${src}\n\n![](${fileName})`)
+      await this.update(`${await this.getSrc()}\n\n![](${fileName})`)
       this.setState({ dragHover: false })
     })
   }
