@@ -23,5 +23,5 @@ app cfg = logStdoutDev
   where
   policy = simpleCorsResourcePolicy
            { corsRequestHeaders = [ "content-type" ]
-           , corsMethods = map renderStdMethod [GET, PUT, POST, PATCH]
+           , corsMethods = map renderStdMethod [GET, PUT, POST, PATCH, DELETE]
            , corsOrigins = flip (,) True . map B.pack <$> configOrigins cfg}

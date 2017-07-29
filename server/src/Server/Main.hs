@@ -30,6 +30,7 @@ mainServer = listProjects
         :<|> update
         :<|> getSource
         :<|> fileList
+        :<|> deleteFile
 
 mdOpts :: WriterOptions
 mdOpts = def {
@@ -148,3 +149,9 @@ fileList name = do
         fileName = T.pack fn
       , fileURI = T.pack $ uriBase </> name </> fn
       }
+
+deleteFile :: FilePath -> FilePath -> ConfigHandler ()
+deleteFile proj fn = do
+  validateFile proj fn
+  dataDirectory <- asks configDataDir
+  liftIO $ removeFile (dataDirectory </> proj </> fn)

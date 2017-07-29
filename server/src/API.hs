@@ -30,6 +30,9 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
            :> Get '[JSON] T.Text
       :<|> "projects" :> Capture "name" String
            :> "files" :> Get '[JSON] [FileInfo]
+      :<|> "projects" :> Capture "name" String
+           :> "files" :> Capture "fileName" String
+           :> Delete '[JSON] ()
 
 type API = MainAPI
       :<|> "projects" :> Capture "name" String
