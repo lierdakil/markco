@@ -52,14 +52,20 @@ getBody name = do
 
 splitMath :: [Block] -> [Block]
 splitMath (Para ils:xs)
-  | length ils > 1 = map Para (split [] [] ils) ++ xs
+  | length ils > 1 = map Para (split ils) ++ xs
   where
-    split res acc [] = reverse (reverse acc : res)
-    split res acc (x@(Math DisplayMath _):ys) =
-      split ([x] : reverse (dropSpaces acc) : res)
-            [] (dropSpaces ys)
-    split res acc (y:ys) = split res (y:acc) ys
-    dropSpaces = dropWhile (\x -> x == Space || x == SoftBreak)
+    split ys =
+      let bef = takeWhile (not . isMath) ys
+          rest = drop (length bef) ys
+          m = takeWhile (not . isSpace) rest
+          af = drop (length m) rest
+      in filter (not . null) [bef, m, af]
+    isMath (Math DisplayMath _) = True
+    isMath (Span _ [Math DisplayMath _]) = True
+    isMath _ = False
+    isSpace Space = True
+    isSpace SoftBreak = True
+    isSpace _ = False
 splitMath xs = xs
 
 render :: FilePath -> ConfigHandler [LT.Text]
