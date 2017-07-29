@@ -13,11 +13,11 @@ export async function getSource (name: string, chunk: number) {
 }
 
 export async function update (name: string, chunk: number, value: string) {
-  return asyncRequest<string[]>('PATCH', `/projects/${name}/${chunk}`, value)
+  return asyncRequest<void>('PATCH', `/projects/${name}/${chunk}`, value)
 }
 
 export async function appendChunk (name: string, value: string) {
-  return asyncRequest<string[]>('PATCH', `/projects/${name}`, value)
+  return asyncRequest<void>('PATCH', `/projects/${name}`, value)
 }
 
 export async function upload (name: string, content: ArrayBuffer) {
