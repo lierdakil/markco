@@ -4,18 +4,23 @@
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 10em;
-  min-width: 10em;
+}
+.project-list:only-child > ul {
+  margin-left: auto;
 }
 .project-list > ul {
   padding: 0;
   margin-right: auto;
   max-width: 25em;
+  overflow: hidden;
+  height: 100%;
 }
 .project-list li {
   list-style: none;
   font-size: large;
   text-transform: capitalize;
   font-variant: small-caps;
+  position: relative;
 }
 .project-list li > a {
   display: block;
@@ -23,6 +28,7 @@
   border: double 3px green;
   border-radius: 2em;
   text-align: center;
+  height: 1em;
 }
 .project-list li > a.active {
   background-color: lightblue;

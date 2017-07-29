@@ -3,7 +3,6 @@
   flex-shrink: 1;
   flex-basis: 10em;
   display: flex;
-  min-width: 10em;
   margin-bottom: auto;
 }
 .file-list > div {
@@ -11,6 +10,8 @@
   margin-left: auto;
   display: flex;
   flex-flow: row wrap;
+  overflow: hidden;
+  height: 100%;
 }
 .file-list-item {
   position: relative;
