@@ -1,4 +1,4 @@
-.chunk-container:hover .control-btns {
+div:hover > .control-btns {
   visibility: visible;
 }
 .control-btns {
