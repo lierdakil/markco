@@ -1,5 +1,9 @@
 import {asyncRequest} from './request'
 
+export async function listProjects () {
+  return asyncRequest<string[]>('GET', `/projects`)
+}
+
 export async function render (name: string) {
   return asyncRequest<string[]>('GET', `/projects/${name}/render`)
 }

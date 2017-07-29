@@ -3,9 +3,46 @@
   height: auto !important;
 }
 #root {
-  width: 21cm;
-  margin: auto;
+  position: relative;
 }
 #newcommands {
   visibility: hidden;
+}
+project {
+  width: 21cm;
+  margin: auto;
+  display: block;
+}
+project + .project-list {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+}
+project + .project-list > ul {
+  margin: 2em 1em;
+  padding: 0;
+}
+.project-list {
+  padding-top: 2em;
+  width: 13em;
+  padding: 0;
+  margin: auto;
+}
+.project-list li {
+  list-style: none;
+  font-size: large;
+  text-transform: capitalize;
+  font-variant: small-caps;
+}
+.project-list li > a {
+  display: block;
+  padding: 1em 0.5em;
+  border: double 3px green;
+  border-radius: 2em;
+  text-align: center;
+}
+.project-list li > a.active {
+  background-color: lightblue;
 }
