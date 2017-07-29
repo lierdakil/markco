@@ -6,6 +6,7 @@ import System.Directory
 import qualified Text.Blaze.Html.Renderer.Text as H
 import Text.Pandoc
 import System.FilePath
+import qualified Data.ByteString as B
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import qualified Data.Text.Lazy.Encoding as LT
@@ -21,6 +22,7 @@ import Text.Pandoc.CrossRef
 import Data.Monoid ((<>))
 import Text.Pandoc.Builder
 import Data.Generics
+import Crypto.Hash
 
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer = listProjects
@@ -125,3 +127,11 @@ listProjects :: ConfigHandler [FilePath]
 listProjects = do
   dataDirectory <- asks configDataDir
   liftIO $ listDirectory dataDirectory
+
+uploadFile :: FilePath -> B.ByteString -> ConfigHandler T.Text
+uploadFile name content = do
+  validateName name
+  dataDirectory <- asks configDataDir
+  let filename = show (hash content :: Digest SHA1)
+  liftIO $ B.writeFile (dataDirectory </> name </> filename) content
+  return $ T.pack filename

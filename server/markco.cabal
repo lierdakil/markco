@@ -43,6 +43,7 @@ library
                      , bytestring
                      , pandoc-crossref
                      , syb
+                     , cryptonite
   default-language:    Haskell2010
   ghc-options:       -Wall
 

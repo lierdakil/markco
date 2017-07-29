@@ -4,6 +4,7 @@
 module API where
 
 import Servant
+import qualified Data.ByteString as B
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Data.Swagger (Swagger)
@@ -18,6 +19,8 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
            :> Get '[JSON] T.Text
 
 type API = MainAPI
+      :<|> "projects" :> Capture "name" String
+           :> "upload" :> ReqBody '[OctetStream] B.ByteString :> Post '[JSON]  T.Text
       :<|> "swagger.json" :> Get '[JSON] Swagger
 
 mainApi :: Proxy MainAPI
