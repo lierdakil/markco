@@ -1,3 +1,5 @@
+import sha1 = require('sha1')
+
 // tslint:disable: no-null-keyword
 export async function asyncRequest<T> (
   type: string, dest: string, body: {} | null = null, bodyType: string = 'application/json'
@@ -5,6 +7,10 @@ export async function asyncRequest<T> (
   const xhr = new XMLHttpRequest()
   xhr.open(type, dest, true)
   xhr.setRequestHeader('Accept', 'application/json')
+  const auth = sessionStorage.getItem('auth')
+  if (auth) {
+    xhr.setRequestHeader('X-Markco-Authentication', auth)
+  }
   const res = new Promise<T>((resolve, reject) => {
     xhr.onreadystatechange = (e) => {
       if (xhr.readyState === 4) {
@@ -12,8 +18,12 @@ export async function asyncRequest<T> (
           resolve()
         } else if (xhr.status >= 200 && xhr.status < 300) {
           resolve(JSON.parse(xhr.responseText))
+        } else if (xhr.status === 401 || xhr.status === 403) {
+          const u = prompt('user?'), p = prompt('pass?')
+          sessionStorage.setItem('auth', `${u}:${sha1(`${u}:${p}`)}`)
+          resolve(asyncRequest(type, dest, body, bodyType))
         } else {
-          reject(JSON.parse(xhr.responseText))
+          reject(xhr.responseText && JSON.parse(xhr.responseText))
         }
       }
     }
