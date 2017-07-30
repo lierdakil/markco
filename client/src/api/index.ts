@@ -44,3 +44,7 @@ export async function fileList (name: string) {
 export async function deleteFile (name: string, file: string) {
   return asyncRequest<string>('DELETE', `/projects/${name}/files/${file}`)
 }
+
+export async function login (authLogin: string, authHashedPassword: string) {
+  return asyncRequest<string>('POST', `/login`, { authLogin, authHashedPassword })
+}
