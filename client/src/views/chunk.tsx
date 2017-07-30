@@ -64,7 +64,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   }
 
   private async getSrc () {
-    return this.props.num
+    return this.props.num !== undefined
       ? await api.getSource(this.props.projectName, this.props.num)
       : ''
   }
