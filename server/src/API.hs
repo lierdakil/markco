@@ -27,6 +27,13 @@ instance ToSchema FileInfo
 newtype User = User { userUsername :: T.Text }
 type instance AuthServerData (AuthProtect "markco") = User
 
+data AuthData = AuthData {
+    authLogin :: T.Text
+  , authHashedPassword :: T.Text
+  } deriving (Generic)
+
+instance FromJSON AuthData
+
 newtype FileData = FileData { unFileData :: B.ByteString }
     deriving (
       MimeRender OctetStream
@@ -61,7 +68,10 @@ type BasicAPI =
 
 type MainAPI = AuthProtect "markco" :> BasicAPI
 
+type LoginAPI = "login" :> ReqBody '[JSON] AuthData :> Post '[JSON] T.Text
+
 type API = MainAPI
+      :<|> LoginAPI
       :<|> "swagger.json" :> Get '[JSON] Swagger
 
 basicApi :: Proxy BasicAPI

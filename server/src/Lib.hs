@@ -16,11 +16,11 @@ import Server
 import Config
 import Misc.Instances ()
 
-app :: Config -> Application
-app cfg = logStdoutDev
+app :: AuthMap -> Config -> Application
+app m cfg = logStdoutDev
     $ cors (const $ Just policy)
     $ provideOptions basicApi
-    $ serveWithContext api (authServerContext cfg) (server cfg)
+    $ serveWithContext api (authServerContext m cfg) (server m cfg)
   where
   policy = simpleCorsResourcePolicy
            { corsRequestHeaders = [ "content-type" ]

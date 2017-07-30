@@ -1,9 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE RecordWildCards #-}
 
 module Server.Main where
 
@@ -30,8 +26,6 @@ import Text.Pandoc.Builder
 import Data.Generics
 import Crypto.Hash (hash, Digest, SHA1)
 import Data.Char (isAlphaNum)
-import Network.Wai
-import Servant.Server.Experimental.Auth
 
 mainServer :: ServerT MainAPI ConfigHandler
 mainServer (_ :: User)
@@ -45,24 +39,6 @@ mainServer (_ :: User)
   :<|> fileList
   :<|> deleteFile
   :<|> uploadFile
-
-authCheck :: Config -> AuthHandler Request User
-authCheck Config{..}
-  | Just conf <- configUserFile =
-  let check req = do
-        let auth = LT.decodeUtf8 . BL.fromStrict <$> lookup "x-markco-authentication" (requestHeaders req)
-        case auth of
-          Nothing -> throwError err401
-          Just hsh -> do
-            uf <- liftIO $ LT.lines . LT.decodeUtf8 <$> BL.readFile conf
-            if hsh `elem` uf
-            then return (User $ LT.toStrict $ LT.takeWhile (/=':') hsh)
-            else throwError err403
-  in mkAuthHandler check
-  | otherwise = mkAuthHandler (const . return $ User "guest")
-
-authServerContext :: Config -> Context (AuthHandler Request User ': '[])
-authServerContext cfg = authCheck cfg :. EmptyContext
 
 mdOpts :: WriterOptions
 mdOpts = def {
@@ -136,8 +112,8 @@ crossRefSettings :: Meta
 crossRefSettings =
      chapters True
   <> numberSections True
-  <> sectionsDepth ("3" :: String)
-  <> chaptersDepth ("1" :: String)
+  <> sectionsDepth "3"
+  <> chaptersDepth "1"
   <> figureTitle (str "Рисунок")
   <> tableTitle (str "Таблица")
   <> listingTitle (str "Листинг")
