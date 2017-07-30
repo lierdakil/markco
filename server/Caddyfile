@@ -1,10 +1,15 @@
 localhost:2015 {
   tls off
-  proxy /projects localhost:8081
   root ../client/dist
-  rewrite /docs/ {
-  	regexp .*
-  	to /
+  rewrite {
+  	to {path} /
+  }
+}
+
+localhost:2015/api {
+  tls off
+  proxy / localhost:8081 {
+    without /api
   }
   startup stack exec markco-exe &
 }

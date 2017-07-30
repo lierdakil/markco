@@ -5,7 +5,7 @@ export async function asyncRequest<T> (
   type: string, dest: string, body: {} | null = null, bodyType: string = 'application/json'
 ): Promise<T> {
   const xhr = new XMLHttpRequest()
-  xhr.open(type, dest, true)
+  xhr.open(type, `/api${dest}`, true)
   xhr.setRequestHeader('Accept', 'application/json')
   const auth = sessionStorage.getItem('auth')
   if (auth) {
