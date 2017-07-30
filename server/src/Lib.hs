@@ -14,6 +14,7 @@ import qualified Data.ByteString.Char8 as B
 import API
 import Server
 import Config
+import Misc.Instances ()
 
 app :: Config -> Application
 app cfg = logStdoutDev

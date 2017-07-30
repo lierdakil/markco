@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module API where
 
@@ -8,7 +9,8 @@ import Servant
 import qualified Data.ByteString as B
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
-import Data.Swagger (Swagger, ToSchema)
+import Data.Swagger (Swagger, ToSchema(..))
+import qualified Data.Swagger as S
 import GHC.Generics
 import Data.Aeson
 
@@ -20,7 +22,18 @@ data FileInfo = FileInfo {
 instance ToJSON FileInfo
 instance ToSchema FileInfo
 
-type MainAPI = "projects" :> Get '[JSON] [FilePath]
+newtype User = User { userUsername :: T.Text }
+newtype FileData = FileData { unFileData :: B.ByteString }
+    deriving (
+      MimeRender OctetStream
+    , MimeUnrender OctetStream
+    )
+
+instance ToSchema FileData where
+  declareNamedSchema _ = return $ S.NamedSchema Nothing S.binarySchema
+
+type BasicAPI =
+           "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String
            :> ReqBody '[JSON] T.Text :> Post '[JSON] ()
       :<|> "projects" :> Capture "name" String :> Delete '[JSON] ()
@@ -38,10 +51,13 @@ type MainAPI = "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String
            :> "files" :> Capture "fileName" String
            :> Delete '[JSON] ()
+      :<|> "projects" :> Capture "name" String
+           :> "files" :> ReqBody '[OctetStream] FileData
+           :> Post '[JSON]  T.Text
+
+type MainAPI = BasicAPI
 
 type API = MainAPI
-      :<|> "projects" :> Capture "name" String
-           :> "files" :> ReqBody '[OctetStream] B.ByteString :> Post '[JSON]  T.Text
       :<|> "swagger.json" :> Get '[JSON] Swagger
 
 mainApi :: Proxy MainAPI

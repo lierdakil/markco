@@ -11,5 +11,4 @@ import Server.Swagger
 server :: Config -> Server API
 server cfg = convertServer cfg $
           mainServer
-     :<|> uploadFile
      :<|> swaggerServer

@@ -36,6 +36,7 @@ mainServer = listProjects
         :<|> getSource
         :<|> fileList
         :<|> deleteFile
+        :<|> uploadFile
 
 mdOpts :: WriterOptions
 mdOpts = def {
@@ -161,8 +162,8 @@ listProjects = do
   dataDirectory <- asks configDataDir
   liftIO $ listDirectory dataDirectory
 
-uploadFile :: FilePath -> B.ByteString -> ConfigHandler T.Text
-uploadFile name content = do
+uploadFile :: FilePath -> FileData -> ConfigHandler T.Text
+uploadFile name (FileData content) = do
   validateName name
   dataDirectory <- asks configDataDir
   let filename = show (hash content :: Digest SHA1)
