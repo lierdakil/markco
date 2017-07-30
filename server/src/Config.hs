@@ -24,10 +24,11 @@ newtype ConfigHandler a = ConfigHandler {
                MonadError ServantErr, MonadIO)
 
 data Config = Config {
-    configDataDir :: !FilePath
-  , configDataUri :: !String
-  , configPort    :: !Int
-  , configOrigins :: !(Maybe [String])
+    configDataDir  :: !FilePath
+  , configDataUri  :: !String
+  , configPort     :: !Int
+  , configOrigins  :: !(Maybe [String])
+  , configUserFile :: !(Maybe FilePath)
   }
 
 convertHandler :: Config -> ConfigHandler :~> Handler
@@ -41,8 +42,9 @@ readConfigFromEnv :: IO Config
 readConfigFromEnv = do
   env <- M.fromList <$> getEnvironment
   return Config {
-    configDataDir = fromMaybe "data" $ M.lookup "MARKCO_DATA_DIR" env
-  , configDataUri = fromMaybe "/data" $ M.lookup "MARKCO_DATA_URI" env
-  , configPort    = fromMaybe 8081 (read <$> M.lookup "MARKCO_PORT" env)
-  , configOrigins = words <$> M.lookup "MARKCO_ORIGINS" env
+    configDataDir  = fromMaybe "data" $ M.lookup "MARKCO_DATA_DIR" env
+  , configDataUri  = fromMaybe "/data" $ M.lookup "MARKCO_DATA_URI" env
+  , configPort     = fromMaybe 8081 (read <$> M.lookup "MARKCO_PORT" env)
+  , configOrigins  = words <$> M.lookup "MARKCO_ORIGINS" env
+  , configUserFile = M.lookup "MARKCO_USER_FILE" env
   }

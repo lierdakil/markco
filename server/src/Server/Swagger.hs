@@ -6,4 +6,4 @@ import Servant.Swagger
 import Data.Swagger
 
 swaggerServer :: ConfigHandler Swagger
-swaggerServer = return (toSwagger mainApi)
+swaggerServer = return (toSwagger basicApi)

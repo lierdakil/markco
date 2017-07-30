@@ -1,6 +1,8 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Server where
+module Server (
+  server, authServerContext
+) where
 
 import Servant
 import API

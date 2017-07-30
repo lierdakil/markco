@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module API where
 
@@ -13,6 +14,7 @@ import Data.Swagger (Swagger, ToSchema(..))
 import qualified Data.Swagger as S
 import GHC.Generics
 import Data.Aeson
+import Servant.Server.Experimental.Auth
 
 data FileInfo = FileInfo {
     fileName :: T.Text
@@ -23,6 +25,8 @@ instance ToJSON FileInfo
 instance ToSchema FileInfo
 
 newtype User = User { userUsername :: T.Text }
+type instance AuthServerData (AuthProtect "markco") = User
+
 newtype FileData = FileData { unFileData :: B.ByteString }
     deriving (
       MimeRender OctetStream
@@ -55,10 +59,13 @@ type BasicAPI =
            :> "files" :> ReqBody '[OctetStream] FileData
            :> Post '[JSON]  T.Text
 
-type MainAPI = BasicAPI
+type MainAPI = AuthProtect "markco" :> BasicAPI
 
 type API = MainAPI
       :<|> "swagger.json" :> Get '[JSON] Swagger
+
+basicApi :: Proxy BasicAPI
+basicApi = Proxy
 
 mainApi :: Proxy MainAPI
 mainApi = Proxy
