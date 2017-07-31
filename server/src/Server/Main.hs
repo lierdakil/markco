@@ -97,16 +97,21 @@ deleteProject name = do
   dataDir <- asks configDataDir
   liftIO $ removeDirectoryRecursive (dataDir </> name)
 
-render :: FilePath -> ConfigHandler [LT.Text]
+render :: FilePath -> ConfigHandler [Chunk]
 render name = do
   Pandoc meta body <- getBody name
   uri <- asks configDataUri
   let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
   let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks . wrapDiv $ walk modImgs body
-  return $ map (H.renderHtml . writeHtml htmlOpts . Pandoc meta . return) body'
+  return $ zipWith (mkChunk meta) body' [0..]
   where
     wrapDiv = map (Div nullAttr . return)
+    mkChunk meta bl idx = Chunk {
+          chunkHtml = H.renderHtml $ writeHtml htmlOpts $ Pandoc meta [bl]
+        , chunkSrc = T.pack $ writeMarkdown mdOpts $ Pandoc meta [bl]
+        , chunkNum = idx
+        }
 
 crossRefSettings :: Meta
 crossRefSettings =

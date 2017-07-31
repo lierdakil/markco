@@ -43,12 +43,21 @@ newtype FileData = FileData { unFileData :: B.ByteString }
 instance ToSchema FileData where
   declareNamedSchema _ = return $ S.NamedSchema Nothing S.binarySchema
 
+data Chunk = Chunk {
+    chunkHtml :: LT.Text
+  , chunkSrc :: T.Text
+  , chunkNum :: Int
+  } deriving (Generic)
+
+instance ToJSON Chunk
+instance ToSchema Chunk
+
 type BasicAPI =
            "projects" :> Get '[JSON] [FilePath]
       :<|> "projects" :> Capture "name" String
            :> ReqBody '[JSON] T.Text :> Post '[JSON] ()
       :<|> "projects" :> Capture "name" String :> Delete '[JSON] ()
-      :<|> "projects" :> Capture "name" String :> Get '[JSON] [LT.Text]
+      :<|> "projects" :> Capture "name" String :> Get '[JSON] [Chunk]
       :<|> "projects" :> Capture "name" String
            :> Capture "chunk" Int
            :> ReqBody '[JSON] T.Text :> Patch '[JSON] ()
