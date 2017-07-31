@@ -7,7 +7,7 @@
 module API where
 
 import Servant
-import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Data.Swagger (Swagger, ToSchema(..))
@@ -34,7 +34,7 @@ data AuthData = AuthData {
 
 instance FromJSON AuthData
 
-newtype FileData = FileData { unFileData :: B.ByteString }
+newtype FileData = FileData { unFileData :: BL.ByteString }
     deriving (
       MimeRender OctetStream
     , MimeUnrender OctetStream
@@ -74,6 +74,8 @@ type BasicAPI =
       :<|> "projects" :> Capture "name" String
            :> "files" :> ReqBody '[OctetStream] FileData
            :> Post '[JSON]  T.Text
+      :<|> "projects" :> Capture "name" String
+           :> "docx" :> Get '[OctetStream] FileData
 
 type MainAPI = AuthProtect "markco" :> BasicAPI
 

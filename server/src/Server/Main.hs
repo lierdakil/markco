@@ -39,6 +39,7 @@ mainServer (_ :: User)
   :<|> fileList
   :<|> deleteFile
   :<|> uploadFile
+  :<|> renderDocx
 
 mdOpts :: WriterOptions
 mdOpts = def {
@@ -113,6 +114,12 @@ render name = do
         , chunkNum = idx
         }
 
+renderDocx :: FilePath -> ConfigHandler FileData
+renderDocx name = do
+  Pandoc meta body <- getBody name
+  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks body
+  FileData <$> liftIO (writeDocx def (Pandoc meta body'))
+
 crossRefSettings :: Meta
 crossRefSettings =
      chapters True
@@ -173,8 +180,9 @@ uploadFile :: FilePath -> FileData -> ConfigHandler T.Text
 uploadFile name (FileData content) = do
   validateName name
   dataDirectory <- asks configDataDir
-  let filename = show (hash content :: Digest SHA1)
-  liftIO $ B.writeFile (dataDirectory </> name </> filename) content
+  let content' = BL.toStrict content
+      filename = show (hash content' :: Digest SHA1)
+  liftIO $ B.writeFile (dataDirectory </> name </> filename) content'
   return $ T.pack filename
 
 fileList :: FilePath -> ConfigHandler [FileInfo]
