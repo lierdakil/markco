@@ -1,12 +1,13 @@
 import * as React from 'react'
 import * as api from '../api'
-import { NavLink } from 'react-router-dom'
+import {Nav, NavItem, Glyphicon, Button} from 'react-bootstrap'
+import {LinkContainer} from 'react-router-bootstrap'
 
-export interface PLState {
+export interface State {
   projects: string[]
 }
 
-export class ProjectList extends React.Component<{}, PLState> {
+export class ProjectList extends React.Component<{}, State> {
   constructor () {
     super()
     this.state = { projects: [] }
@@ -15,22 +16,19 @@ export class ProjectList extends React.Component<{}, PLState> {
 
   public render () {
     return (
-      <div className="project-list">
-        <div>
-          { this.state.projects.map((prjName) =>
-            <div className="project-list-item">
-              <NavLink to={`/docs/${prjName}`}>
+      <Nav bsStyle="pills" stacked activeKey={1}>
+        { this.state.projects.map(
+          (prjName, idx) =>
+            <LinkContainer to={`/docs/${prjName}`}>
+              <NavItem eventKey={idx}>
                 {prjName}
-              </NavLink>
-              <div className="control-btns">
-                <button className="btn btn-delete" onClick={async () => this.delete(prjName)} />
-              </div>
-            </div>) }
-          <div className="project-list-item last-project">
-            <a onClick={this.create.bind(this)}></a>
-          </div>
-        </div>
-      </div>
+              </NavItem>
+            </LinkContainer>
+        ) }
+        <Button bsStyle="primary" className="btn-block" onClick={this.create.bind(this)}>
+          <Glyphicon glyph="plus"/>
+        </Button>
+      </Nav>
     )
   }
 

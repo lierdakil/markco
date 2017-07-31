@@ -5,16 +5,19 @@
 #newcommands {
   display: none;
 }
-.container {
-  position: relative;
-  display: flex;
-  flex-flow: row nowrap;
-  height: 100vh;
+.drag-hover {
+  background-color: lightgreen;
 }
-.container > * {
-  max-height: 100vh;
-  overflow: auto;
+doc img {
+  max-width: 100%;
 }
-body {
-  margin: 0;
+.btn-panel {
+  position: fixed;
+  top: 50vh;
+}
+.btn-panel-left {
+  left: 0;
+}
+.btn-panel-right {
+  right: 0;
 }

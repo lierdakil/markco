@@ -12,8 +12,14 @@ export async function deleteProject (name: string) {
   return asyncRequest<void>('DELETE', `/projects/${name}`)
 }
 
+export interface ChunkData {
+  chunkHtml: string
+  chunkSrc: string
+  chunkNum: number
+}
+
 export async function render (name: string) {
-  return asyncRequest<string[]>('GET', `/projects/${name}`)
+  return asyncRequest<ChunkData[]>('GET', `/projects/${name}`)
 }
 
 export async function getSource (name: string, chunk: number) {

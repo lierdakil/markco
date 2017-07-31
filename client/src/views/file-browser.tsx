@@ -1,18 +1,19 @@
 import * as React from 'react'
-import { RouteComponentProps } from 'react-router-dom'
 import * as api from '../api'
+import {Row, Col, Image, Button, Glyphicon} from 'react-bootstrap'
 import Dropzone = require('react-dropzone')
+import {ControlBtns} from './control-btns'
 
-export interface DocProps {
+export interface Props {
   name: string
 }
 
-export interface DocState {
+export interface State {
   files: api.FileInfo[]
 }
 
-export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, DocState> {
-  constructor (props: RouteComponentProps<DocProps>) {
+export class FileBrowser extends React.Component<Props, State> {
+  constructor (props: Props) {
     super(props)
     this.state = { files: [] }
     this.update()
@@ -20,32 +21,35 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
 
   public render () {
     return (
-      <div className="file-list">
-        <div>
-          {this.state.files.map(({fileName, fileURI}) =>
-            <div className="file-list-item"
-                 style={{'background-image': `url(${fileURI})`}}
-                 draggable={true}
-                 onDragStart={(ev) => {
-                   ev.dataTransfer.setData(
-                     'application/x-filename', fileName
-                   )
-                 }}
-                 >
-              <div className="control-btns">
-                <button className="btn btn-delete" onClick={async () => this.delete(fileName)} />
-              </div>
-            </div>
-          )}
-          <Dropzone className="file-list-item file-list-dropzone" onDrop={this.drop.bind(this)}/>
-        </div>
-      </div>
+      <Row>
+        {this.state.files.map(({fileName, fileURI}, idx) =>
+          <Col xs={12} md={6}>
+            <ControlBtns onDelete={() => {this.delete(fileName)}}>
+              <Image tabIndex={idx + 1000000}
+                src={fileURI} thumbnail draggable={true}
+                onDragStart={(ev) => {
+                  ev.dataTransfer.setData(
+                    'application/x-filename', fileName
+                  )
+                }}
+                />
+            </ControlBtns>
+          </Col>
+        )}
+        <Dropzone className="file-list-item file-list-dropzone" onDrop={this.drop.bind(this)}>
+          <Col xs={12}>
+            <Button className="btn-block" bsStyle="primary">
+              <Glyphicon glyph="plus" />
+            </Button>
+          </Col>
+        </Dropzone>
+      </Row>
     )
   }
 
-  public componentWillUpdate (nextProps: RouteComponentProps<DocProps>) {
-    if (nextProps.match.params.name !== this.props.match.params.name) {
-      this.update(nextProps.match.params.name)
+  public componentWillUpdate (nextProps: Props) {
+    if (nextProps.name !== this.props.name) {
+      this.update(nextProps.name)
     }
   }
 
@@ -53,7 +57,7 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
     MathJax.Hub && MathJax.Hub.Queue(['Typeset', MathJax.Hub])
   }
 
-  public async update (name = this.props.match.params.name) {
+  public async update (name = this.props.name) {
     this.setState({files: await api.fileList(name)})
   }
 
@@ -63,7 +67,7 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
     for (const file of files) {
       reader.readAsArrayBuffer(file)
       await new Promise((resolve, reject) => {
-        reader.onload = async () => resolve(api.upload(this.props.match.params.name, reader.result))
+        reader.onload = async () => resolve(api.upload(this.props.name, reader.result))
         reader.onabort = (ev) => reject(ev)
         reader.onerror = (ev) => reject(ev)
       })
@@ -72,9 +76,7 @@ export class FileBrowser extends React.Component<RouteComponentProps<DocProps>, 
   }
 
   private async delete (fileName: string) {
-    if (confirm('You sure you want to delete?') === true) {
-      await api.deleteFile(this.props.match.params.name, fileName)
-      this.update()
-    }
+    await api.deleteFile(this.props.name, fileName)
+    this.update()
   }
 }

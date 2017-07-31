@@ -1,11 +1,15 @@
 import * as React from 'react'
 import CodeMirrorReact = require('react-codemirror')
 import * as api from '../api'
+import {ControlBtns} from './control-btns'
 
 export interface ChunkProps {
   content: string
   num?: number
+  src: string
   projectName: string
+  startEditMode?: boolean
+  onPaste: () => void
   onUpdated: () => void
 }
 
@@ -24,9 +28,9 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
   constructor (props: ChunkProps) {
     super(props)
     this.state = {
-      editMode: false,
+      editMode: !!this.props.startEditMode,
       dragHover: false,
-      src: ''
+      src: this.props.src
     }
   }
 
@@ -36,7 +40,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     this.props.num === undefined && classes.push('last-chunk')
     return (
       this.state.editMode ?
-      <div onPaste={this.imagePaste.bind(this)}>
+      <div onPaste={this.imagePaste.bind(this)} onKeyUp={this.keyPress.bind(this)}>
         <CodeMirrorReact ref="textarea" value={this.state.src}
           onFocusChange={this.focusChange.bind(this)}
           onChange={this.handleChange.bind(this)}
@@ -49,31 +53,26 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           }}
         />
       </div> :
-      <div className={classes.join(' ')}
-           onDragEnter={this.dragEnter.bind(this)}
-           onDragLeave={this.dragLeave.bind(this)}
-           onDragOver={this.dragOver.bind(this)}
-           onDrop={this.dropOnChunk.bind(this)}>
-        <chunk dangerouslySetInnerHTML={{__html: this.props.content}} />
-        <div className="control-btns">
-          <button className="btn btn-edit" onClick={this.edit.bind(this)} />
-          <button className="btn btn-delete" onClick={this.delete.bind(this)} />
-        </div>
-      </div>
+      <ControlBtns placement="bottom"
+          onEdit={this.edit.bind(this)}
+          onDelete={this.delete.bind(this)}
+          >
+        <chunk
+            tabIndex={this.props.num && this.props.num + 1}
+            className={classes.join(' ')}
+            onDragEnter={this.dragEnter.bind(this)}
+            onDragLeave={this.dragLeave.bind(this)}
+            onDragOver={this.dragOver.bind(this)}
+            onDrop={this.dropOnChunk.bind(this)}
+            onDoubleClick={this.edit.bind(this)}
+            dangerouslySetInnerHTML={{__html: this.props.content}}
+          />
+      </ControlBtns>
     )
   }
 
-  private async getSrc () {
-    return this.props.num !== undefined
-      ? await api.getSource(this.props.projectName, this.props.num)
-      : ''
-  }
-
   private async edit () {
-    this.setState({
-      src: await this.getSrc(),
-      editMode: true
-    })
+    this.setState({ editMode: true })
   }
 
   private async imagePaste (ev: React.ClipboardEvent<HTMLDivElement>) {
@@ -92,13 +91,19 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           reader.onloadend = () => resolve()
         })
       }
+      this.props.onPaste()
+    }
+  }
+
+  private keyPress (ev: React.KeyboardEvent<HTMLDivElement>) {
+    if (ev.keyCode === 27) {
+      this.update()
+      this.setState({editMode: false})
     }
   }
 
   private async delete () {
-    if (confirm('You sure you want to delete?') === true) {
-      this.update('')
-    }
+    this.update('')
   }
 
   private async update (content = this.state.src) {
@@ -149,7 +154,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
 
   private async dropOnChunk (ev: React.DragEvent<HTMLDivElement>) {
     this.withDragData(ev, async (fileName) => {
-      await this.update(`${await this.getSrc()}\n\n![](${fileName})`)
+      await this.update(`${this.state.src}\n\n![](${fileName})`)
       this.setState({ dragHover: false })
     })
   }
