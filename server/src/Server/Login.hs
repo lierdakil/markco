@@ -23,6 +23,8 @@ import Servant.Server.Experimental.Auth
 import qualified STMContainers.Map as M
 import Crypto.Random
 import GHC.Conc
+import Control.Monad.Loops
+import Data.Maybe
 
 type AuthMap = M.Map B.ByteString User
 
@@ -43,16 +45,22 @@ authServerContext :: AuthMap -> Config -> Context (AuthHandler Request User ': '
 authServerContext m cfg = authCheck m cfg :. EmptyContext
 
 login :: AuthMap -> AuthData -> ConfigHandler T.Text
-login m AuthData{..} = do
-  confMaybe <- asks configUserFile
-  case confMaybe of
-    Just conf -> do
+login m AuthData{..} =
+  asks configUserFile >>= maybe (throwError err400) doCheckUserAuth
+  where
+    isUserAuthCorrect conf = do
       let hsh = authLogin <> ":" <> authHashedPassword
       uf <- liftIO $ LT.lines . LT.decodeUtf8 <$> BL.readFile conf
-      if LT.fromStrict hsh `elem` uf
-      then do
-        (bytes :: B.ByteString) <- liftIO $ getRandomBytes 64
-        liftIO . atomically $ M.insert (User authLogin) bytes m
-        return $ LT.toStrict $ LT.decodeUtf8 $ BL.fromStrict $ B64.encode bytes
-      else throwError err403
-    Nothing -> throwError err400
+      return $ LT.fromStrict hsh `elem` uf
+    doCheckUserAuth = (authAction =<<) . isUserAuthCorrect
+    authAction False = throwError err403
+    authAction True = do
+      Just bytes <- liftIO . iterateUntil isJust $ tryMakeSID
+      return $ LT.toStrict $ LT.decodeUtf8 $ BL.fromStrict $ B64.encode bytes
+    tryMakeSID = do
+      (k :: B.ByteString) <- getRandomBytes 64
+      atomically $ do
+        e <- M.lookup k m
+        case e of
+          Nothing -> M.insert (User authLogin) k m >> return (Just k)
+          Just _ -> return Nothing
