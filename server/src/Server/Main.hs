@@ -105,12 +105,12 @@ render name = do
   let modImgs (Image a t (src, tit)) = Image a t (uri </> name </> src, tit)
       modImgs x = x
   let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks . wrapDiv $ walk modImgs body
-  return $ zipWith (mkChunk meta) body' [0..]
+  return $ zipWith3 (mkChunk meta) body body' [0..]
   where
     wrapDiv = map (Div nullAttr . return)
-    mkChunk meta bl idx = Chunk {
+    mkChunk meta blold bl idx = Chunk {
           chunkHtml = H.renderHtml $ writeHtml htmlOpts $ Pandoc meta [bl]
-        , chunkSrc = T.pack $ writeMarkdown mdOpts $ Pandoc meta [bl]
+        , chunkSrc = T.pack $ writeMarkdown mdOpts $ Pandoc meta [blold]
         , chunkNum = idx
         }
 
