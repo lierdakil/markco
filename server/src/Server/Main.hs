@@ -116,9 +116,37 @@ render name = do
 
 renderDocx :: FilePath -> ConfigHandler FileData
 renderDocx name = do
-  Pandoc meta body <- getBody name
-  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks body
+  validateName name
+  dataDirectory <- asks configDataDir
+  Pandoc meta body <- handlePandocError . readMarkdown def . (newcommands <>)
+    =<< liftIO (readFile (dataDirectory </> name </> "index.md"))
+  let modImgs (Image a t (src, tit)) = Image a t (dataDirectory </> name </> src, tit)
+      modImgs x = x
+  let body' = runCrossRef (crossRefSettings <> meta) Nothing crossRefBlocks $ walk modImgs body
   FileData <$> liftIO (writeDocx def (Pandoc meta body'))
+
+newcommands :: String
+newcommands =
+     "\
+     \\\newcommand{\\d}{\\mathrm{d}}\n\
+     \\\newcommand{\\pdt}[1]{\\frac{\\partial #1}{\\partial t}}\n\
+     \\\newcommand{\\pd}[2]{\\frac{\\partial #1}{\\partial #2}}\n\
+     \\\newcommand{\\fdt}[1]{\\frac{\\d #1}{\\d t}}\n\
+     \\\newcommand{\\fd}[2]{\\frac{\\d #1}{\\d #2}}\n\
+     \\\newcommand{\\arctg}{\\mathrm{arctg}}\n\
+     \\\newcommand{\\tg}{\\mathrm{tg}}\n\
+     \\\newcommand{\\vect}[1]{\\boldsymbol{\\mathbf{#1}}}\n\
+     \\\newcommand{\\unit}[1]{\\;\\text{#1}}\n\
+     \\\newcommand{\\lr}[3]{\\left#1{#3}\\right#2}\n\
+     \\\newcommand{\\paren}[1]{\\lr(){#1}}\n\
+     \\\newcommand{\\brace}[1]{\\lr\\lbrace\\rbrace{#1}}\n\
+     \\\newcommand{\\brack}[1]{\\lr\\lbrack\\rbrack{#1}}\n\
+     \\\newcommand{\\angle}[1]{\\lr\\langle\\rangle{#1}}\n\
+     \\\newcommand{\\abs}[1]{\\lr||{#1}}\n\
+     \\\newcommand{\\rline}[1]{\\lr.|{#1}}\n\
+     \\\newcommand{\\deg}{{^\\circ}}\n\
+     \\\renewcommand{\\epsilon}{\\varepsilon}\n\
+     \\\newcommand{\\max}{\\mathrm{max}}\n"
 
 crossRefSettings :: Meta
 crossRefSettings =
