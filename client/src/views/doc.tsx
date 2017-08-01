@@ -2,6 +2,7 @@ import * as React from 'react'
 import {Chunk} from './chunk'
 import * as api from '../api'
 import {Button, Glyphicon} from 'react-bootstrap'
+import {saveAs} from 'file-saver'
 
 export interface Props {
   name: string
@@ -29,6 +30,9 @@ export class Doc extends React.Component<Props, State> {
   public render () {
     return (
       <doc>
+        <Button bsStyle="primary" onClick={this.download.bind(this)}>
+          <Glyphicon glyph="download-alt" /> Download
+        </Button>
         {this.state.chunks.map((chunk) =>
           <Chunk
             projectName={this.props.name}
@@ -64,5 +68,10 @@ export class Doc extends React.Component<Props, State> {
     this.setState({
       chunks: this.state.chunks.concat([{chunkHtml: 'New', chunkSrc: '', startEditMode: true}])
     })
+  }
+
+  private async download () {
+    const blob = await api.downloadDocx(this.props.name)
+    saveAs(blob, `${this.props.name}.docx`, true)
   }
 }

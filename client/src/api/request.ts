@@ -1,10 +1,12 @@
 // tslint:disable: no-null-keyword
 export async function asyncRequest<T> (
-  type: string, dest: string, body: {} | null = null, bodyType: string = 'application/json'
+  type: string, dest: string, body: {} | null = null, bodyType: string = 'application/json',
+  resultMime = 'application/json', resultType: XMLHttpRequestResponseType = 'json'
 ): Promise<T> {
   const xhr = new XMLHttpRequest()
+  xhr.responseType = resultType
   xhr.open(type, `/api${dest}`, true)
-  xhr.setRequestHeader('Accept', 'application/json')
+  xhr.setRequestHeader('Accept', resultMime)
   const auth = sessionStorage.getItem('auth')
   if (auth) {
     xhr.setRequestHeader('X-Markco-Authentication', auth)
@@ -15,14 +17,14 @@ export async function asyncRequest<T> (
         if (xhr.status === 204 || xhr.status === 205) {
           resolve()
         } else if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(JSON.parse(xhr.responseText))
+          resolve(xhr.response)
         } else {
           if (auth && (xhr.status === 401 || xhr.status === 403)) {
             sessionStorage.removeItem('auth')
             sessionStorage.setItem('return-url', location.href)
             location.reload()
           }
-          reject(xhr.responseText && JSON.parse(xhr.responseText))
+          reject(xhr.response)
         }
       }
     }

@@ -54,3 +54,11 @@ export async function deleteFile (name: string, file: string) {
 export async function login (authLogin: string, authHashedPassword: string) {
   return asyncRequest<string>('POST', `/login`, { authLogin, authHashedPassword })
 }
+
+export async function downloadDocx (name: string) {
+  return asyncRequest<Blob>(
+    'GET', `/projects/${name}/docx`,
+    null, undefined,  // tslint:disable-line: no-null-keyword
+    'application/octet-stream', 'blob'
+  )
+}
