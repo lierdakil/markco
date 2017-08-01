@@ -32,4 +32,10 @@ doc img {
 }
 .chunk-container {
   position: relative;
+  border-top: solid transparent 1px;
+  border-bottom: solid transparent 1px;
+}
+.chunk-container:hover {
+  border-top: solid lightgrey 1px;
+  border-bottom: solid lightgrey 1px;
 }
