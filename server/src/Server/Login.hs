@@ -32,14 +32,11 @@ loginServer = login
 authCheck :: AuthMap -> Config -> AuthHandler Request User
 authCheck m Config{..}
   | Just _ <- configUserFile =
-  let check req = do
-        let auth = B64.decodeLenient <$> lookup "x-markco-authentication" (requestHeaders req)
-        case auth of
-          Nothing -> throwError err401
-          Just hsh -> do
-            user <- liftIO $ atomically $ M.lookup hsh m
-            maybe (throwError err403) return user
-  in mkAuthHandler check
+  let check Nothing = throwError err401
+      check (Just hsh) =
+        maybe (throwError err403) return =<< liftIO (atomically $ M.lookup hsh m)
+      extractHeader = fmap B64.decodeLenient . lookup "x-markco-authentication" . requestHeaders
+  in mkAuthHandler (check . extractHeader)
   | otherwise = mkAuthHandler (const . return $ User "guest")
 
 authServerContext :: AuthMap -> Config -> Context (AuthHandler Request User ': '[])
