@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as api from '../api'
 import {Nav, NavItem, Glyphicon, Button} from 'react-bootstrap'
 import {LinkContainer} from 'react-router-bootstrap'
+import {ControlBtns} from './control-btns'
 
 export interface State {
   projects: string[]
@@ -20,9 +21,10 @@ export class ProjectList extends React.Component<{}, State> {
         { this.state.projects.map(
           (prjName, idx) =>
             <LinkContainer to={`/docs/${prjName}`}>
-              <NavItem eventKey={idx}>
-                {prjName}
-              </NavItem>
+                <NavItem tabIndex={2000000 + idx} eventKey={idx}>
+                    <ControlBtns onDelete={() => { this.delete(prjName) }}/>
+                    {prjName}
+                </NavItem>
             </LinkContainer>
         ) }
         <Button bsStyle="primary" className="btn-block" onClick={this.create.bind(this)}>
@@ -45,9 +47,7 @@ export class ProjectList extends React.Component<{}, State> {
   }
 
   private async delete (name: string) {
-    if (confirm('You sure you want to delete?') === true) {
-      await api.deleteProject(name)
-      this.update()
-    }
+    await api.deleteProject(name)
+    this.update()
   }
 }

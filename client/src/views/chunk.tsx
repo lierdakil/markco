@@ -53,13 +53,13 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
           }}
         />
       </div> :
-      <ControlBtns placement="bottom"
-          onEdit={this.edit.bind(this)}
-          onDelete={this.delete.bind(this)}
-          >
+      <div className={classes.join(' ')}>
+        <ControlBtns placement="bottom"
+            onEdit={this.edit.bind(this)}
+            onDelete={this.delete.bind(this)}
+            />
         <chunk
             tabIndex={this.props.num && this.props.num + 1}
-            className={classes.join(' ')}
             onDragEnter={this.dragEnter.bind(this)}
             onDragLeave={this.dragLeave.bind(this)}
             onDragOver={this.dragOver.bind(this)}
@@ -67,7 +67,7 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
             onDoubleClick={this.edit.bind(this)}
             dangerouslySetInnerHTML={{__html: this.props.content}}
           />
-      </ControlBtns>
+      </div>
     )
   }
 

@@ -21,3 +21,15 @@ doc img {
 .btn-panel-right {
   right: 0;
 }
+.control-btn-group {
+  position: absolute;
+  display: none;
+  right: 0;
+  top: 0;
+}
+*:hover > .control-btn-group {
+  display: initial;
+}
+.chunk-container {
+  position: relative;
+}

@@ -1,6 +1,7 @@
 // tslint:disable: no-null-keyword
 import * as React from 'react'
-import {Button, Glyphicon, ButtonGroup, OverlayTrigger, Modal} from 'react-bootstrap'
+import {Button, Glyphicon, ButtonGroup, Modal} from 'react-bootstrap'
+import {Portal} from 'react-overlays'
 
 export interface Props {
   onEdit?: () => void
@@ -21,22 +22,20 @@ export class ControlBtns extends React.Component<Props, State> {
   }
 
   public render () {
-    return (
-      <div>
-        <OverlayTrigger
-            trigger={['focus']}
-            placement={this.props.placement}
-            overlay={this.btnOverlay()}>
-          {this.props.children}
-        </OverlayTrigger>
-        {this.modalConfirmDialog()}
-      </div>
-    )
+    if (this.state.showDialog) {
+      return (
+        <Portal container={() => document.body}>
+          {this.modalConfirmDialog()}
+        </Portal>
+      )
+    } else {
+      return this.btnOverlay()
+    }
   }
 
   private btnOverlay () {
     return (
-      <ButtonGroup style={{position: 'absolute'}}>
+      <ButtonGroup className="control-btn-group">
         {this.props.onEdit ?
           <Button onClick={this.props.onEdit}>
             <Glyphicon glyph="pencil"/>

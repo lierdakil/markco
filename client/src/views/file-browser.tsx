@@ -24,16 +24,15 @@ export class FileBrowser extends React.Component<Props, State> {
       <Row>
         {this.state.files.map(({fileName, fileURI}, idx) =>
           <Col xs={12} md={6}>
-            <ControlBtns onDelete={() => {this.delete(fileName)}}>
-              <Image tabIndex={idx + 1000000}
-                src={fileURI} thumbnail draggable={true}
-                onDragStart={(ev) => {
-                  ev.dataTransfer.setData(
-                    'application/x-filename', fileName
-                  )
-                }}
-                />
-            </ControlBtns>
+            <ControlBtns onDelete={() => {this.delete(fileName)}} />
+            <Image tabIndex={idx + 1000000}
+              src={fileURI} thumbnail draggable={true}
+              onDragStart={(ev) => {
+                ev.dataTransfer.setData(
+                  'application/x-filename', fileName
+                )
+              }}
+              />
           </Col>
         )}
         <Dropzone className="file-list-item file-list-dropzone" onDrop={this.drop.bind(this)}>
