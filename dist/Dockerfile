@@ -30,7 +30,7 @@ COPY server/users.txt $DATA
 RUN mkdir $DATA/data && chown $USER:$USER $DATA/data
 
 ENV MARKCO_USER_FILE users.txt
-ENV MARKCO_NEWCOMMANDS MARKCO_NEWCOMMANDS=/usr/share/markco/newcommands.tex
+ENV MARKCO_NEWCOMMANDS /usr/share/markco/newcommands.tex
 
 WORKDIR $DATA
 CMD ["su-exec", "$USER", "caddy", "--conf", "/etc/Caddyfile"]
