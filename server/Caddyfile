@@ -1,9 +1,11 @@
 localhost:2015 {
   tls off
+  errors stderr
   root ../client/dist
   rewrite {
   	to {path} /
   }
+  templates
 }
 
 localhost:2015/api {
@@ -11,7 +13,7 @@ localhost:2015/api {
   proxy / localhost:8081 {
     without /api
   }
-  startup stack exec markco-exe &
+  startup env MARKCO_USER_FILE=users.txt MARKCO_NEWCOMMANDS=../client/html/newcommands.tex stack exec markco-exe &
 }
 
 localhost:2015/data {

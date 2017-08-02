@@ -6,6 +6,7 @@ var tsify = require("tsify");
 var paths = {
     pages: [
       'html/*.html',
+      'html/*.tex',
     ],
     css: [
       'node_modules/codemirror/lib/codemirror.css',
