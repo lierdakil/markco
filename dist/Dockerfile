@@ -15,7 +15,7 @@ FROM alpine:latest
 
 ENV USER markco
 ENV DATA /var/lib/$USER
-VOLUME $DATA
+#VOLUME $DATA
 
 RUN addgroup $USER -S -g 199 && \
 	adduser -S -u 199 -h $DATA -s /bin/false -G $USER -D $USER
@@ -27,6 +27,7 @@ COPY --from=0 /var/tmp/server/dist/* /usr/bin
 COPY Caddyfile /etc/
 COPY markco/ /usr/share/markco
 COPY server/users.txt $DATA
+RUN mkdir $DATA/data && chown $USER:$USER $DATA/data
 
 ENV MARKCO_USER_FILE users.txt
 ENV MARKCO_NEWCOMMANDS MARKCO_NEWCOMMANDS=/usr/share/markco/newcommands.tex
