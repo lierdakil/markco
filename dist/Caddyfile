@@ -4,6 +4,8 @@
   rewrite {
     to {path} /
   }
+  templates
+  errors stderr
 }
 
 :2015/api {
@@ -12,9 +14,11 @@
     without /api
   }
   startup markco-exe &
+  errors stderr
 }
 
 :2015/data {
   tls off
   root /var/lib/markco/data
+  errors stderr
 }
