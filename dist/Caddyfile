@@ -10,15 +10,14 @@
 
 :2015/api {
   tls off
-  proxy / localhost:8081 {
+  proxy / localhost:{$MARKCO_PORT} {
     without /api
   }
-  startup markco-exe &
   errors stderr
 }
 
-:2015/data {
+:2015{$MARKCO_DATA_URI} {
   tls off
-  root /var/lib/markco/data
+  root {$MARKCO_DATA_DIR}
   errors stderr
 }

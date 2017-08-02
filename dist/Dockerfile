@@ -20,7 +20,7 @@ ENV DATA /var/lib/$USER
 RUN addgroup $USER -S -g 199 && \
 	adduser -S -u 199 -h $DATA -s /bin/false -G $USER -D $USER
 
-RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && apk --no-cache --update add su-exec caddy gmp libffi
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && apk --no-cache --update add caddy gmp libffi supervisor
 
 COPY --from=0 /var/tmp/server/dist/* /usr/bin
 
@@ -28,9 +28,16 @@ COPY Caddyfile /etc/
 COPY markco/ /usr/share/markco
 COPY server/users.txt $DATA
 RUN mkdir $DATA/data && chown $USER:$USER $DATA/data
+COPY markco.ini /etc/supervisor.d/
 
+ENV MARKCO_DATA_DIR $DATA/data
+ENV MARKCO_DATA_URI /data
+ENV MARKCO_PORT 8081
+#ENV MARKCO_ORIGINS
 ENV MARKCO_USER_FILE users.txt
 ENV MARKCO_NEWCOMMANDS /usr/share/markco/newcommands.tex
+RUN mkdir -p $DATA/caddy && chown $USER:$USER $DATA/caddy
+ENV CADDYPATH $DATA/caddy
 
 WORKDIR $DATA
-CMD ["su-exec", "$USER", "caddy", "--conf", "/etc/Caddyfile"]
+CMD ["supervisord"]
