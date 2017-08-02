@@ -26,6 +26,7 @@ COPY --from=0 /var/tmp/server/dist/* /usr/bin
 
 COPY Caddyfile /etc/
 COPY markco/ /usr/share/markco
+COPY server/users.txt $DATA
 
 ENV MARKCO_USER_FILE users.txt
 ENV MARKCO_NEWCOMMANDS MARKCO_NEWCOMMANDS=/usr/share/markco/newcommands.tex
