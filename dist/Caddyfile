@@ -1,0 +1,20 @@
+:2015 {
+  tls off
+  root /usr/share/markco
+  rewrite {
+    to {path} /
+  }
+}
+
+:2015/api {
+  tls off
+  proxy / localhost:8081 {
+    without /api
+  }
+  startup markco-exe &
+}
+
+:2015/data {
+  tls off
+  root /var/lib/markco/data
+}
