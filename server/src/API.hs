@@ -53,37 +53,37 @@ instance ToJSON Chunk
 instance ToSchema Chunk
 
 type BasicAPI =
-           "projects" :> Get '[JSON] [FilePath]
-      :<|> "projects" :> Capture "name" String
+           Get '[JSON] [FilePath]
+      :<|> Capture "name" String
            :> ReqBody '[JSON] T.Text :> Post '[JSON] ()
-      :<|> "projects" :> Capture "name" String :> Delete '[JSON] ()
-      :<|> "projects" :> Capture "name" String :> Get '[JSON] [Chunk]
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String :> Delete '[JSON] ()
+      :<|> Capture "name" String :> Get '[JSON] [Chunk]
+      :<|> Capture "name" String
            :> Capture "chunk" Int
            :> ReqBody '[JSON] T.Text :> Patch '[JSON] ()
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> ReqBody '[JSON] T.Text :> Patch '[JSON] ()
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> Capture "chunk" Int
            :> Get '[JSON] T.Text
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> "files" :> Get '[JSON] [FileInfo]
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> "files" :> Capture "fileName" String
            :> Delete '[JSON] ()
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> "files" :> ReqBody '[OctetStream] FileData
            :> Post '[JSON]  T.Text
-      :<|> "projects" :> Capture "name" String
+      :<|> Capture "name" String
            :> "docx" :> Get '[OctetStream] FileData
 
 type MainAPI = AuthProtect "markco" :> BasicAPI
 
 type LoginAPI = "login" :> ReqBody '[JSON] AuthData :> Post '[JSON] T.Text
 
-type API = MainAPI
-      :<|> LoginAPI
+type API = "api" :> ("projects" :> MainAPI :<|> LoginAPI)
       :<|> "swagger.json" :> Get '[JSON] Swagger
+      :<|> Raw
 
 basicApi :: Proxy BasicAPI
 basicApi = Proxy

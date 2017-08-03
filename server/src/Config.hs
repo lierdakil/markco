@@ -25,6 +25,7 @@ newtype ConfigHandler a = ConfigHandler {
 
 data Config = Config {
     configDataDir    :: !FilePath
+  , configStaticDir  :: !FilePath
   , configDataUri    :: !String
   , configPort       :: !Int
   , configOrigins    :: !(Maybe [String])
@@ -44,6 +45,7 @@ readConfigFromEnv = do
   env <- M.fromList <$> getEnvironment
   return Config {
     configDataDir    = fromMaybe "data" $ M.lookup "MARKCO_DATA_DIR" env
+  , configStaticDir  = fromMaybe "../client/dist" $ M.lookup "MARKCO_STATIC_DIR" env
   , configDataUri    = fromMaybe "/data" $ M.lookup "MARKCO_DATA_URI" env
   , configPort       = fromMaybe 8081 (read <$> M.lookup "MARKCO_PORT" env)
   , configOrigins    = words <$> M.lookup "MARKCO_ORIGINS" env

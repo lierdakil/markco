@@ -1,5 +1,4 @@
 *
-!Caddyfile
 !Dockerfile
 !Makefile
 !.gitignore

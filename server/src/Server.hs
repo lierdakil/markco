@@ -10,9 +10,9 @@ import Config
 import Server.Main
 import Server.Login
 import Server.Swagger
+import Server.Static
 
 server :: AuthMap -> Config -> Server API
-server m cfg = convertServer cfg $
-          mainServer
-     :<|> loginServer m
+server m cfg = convertServer cfg (mainServer :<|> loginServer m)
      :<|> swaggerServer
+     :<|> staticServer cfg

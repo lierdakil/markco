@@ -1,9 +1,9 @@
 module Server.Swagger where
 
 import API
-import Config
 import Servant.Swagger
 import Data.Swagger
+import Servant
 
-swaggerServer :: ConfigHandler Swagger
+swaggerServer :: Handler Swagger
 swaggerServer = return (toSwagger basicApi)

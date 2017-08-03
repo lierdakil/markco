@@ -23,6 +23,7 @@ library
                      , Server.Main
                      , Server.Swagger
                      , Server.Login
+                     , Server.Static
                      , Misc.Instances
   build-depends:       base >= 4.7 && < 5
                      , servant-server
@@ -52,6 +53,11 @@ library
                      , stm-containers
                      , base64-bytestring
                      , monad-loops
+                     , wai-app-static
+                     , network-uri
+                     , unix-compat
+                     , memory
+                     , transformers
   default-language:    Haskell2010
   ghc-options:       -Wall
 
