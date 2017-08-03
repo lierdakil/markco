@@ -19,14 +19,15 @@ docker run -it --rm markco
 ## Development
 
 To run a dev-version locally,
-install [`caddy`](https://caddyserver.com/), then:
 
 ```bash
 cd server/
 mkdir data/
 stack build
-caddy
+env MARKCO_USER_FILE=users.txt MARKCO_NEWCOMMANDS=../client/html/newcommands.tex stack exec markco-exe
 ```
+
+It will run on port 8081 by default.
 
 ## Userfile format
 
@@ -43,3 +44,7 @@ You can generate the second part (`sha1sum("${username}:${password}"` that is) w
 ```bash
 echo -n test:markco | sha1sum
 ```
+
+## Environment variables
+
+See `server/src/Config.hs` and `dist/Dockerfile` for available options. You will want to set, at least, `MARKCO_USER_FILE`, which should point to a user-file.
