@@ -71,6 +71,12 @@ export class Chunk extends React.Component<ChunkProps, ChunkState> {
     )
   }
 
+  public componentWillReceiveProps (props: ChunkProps) {
+    if (props.src !== this.state.src) {
+      this.setState({src: props.src})
+    }
+  }
+
   private async edit () {
     this.setState({ editMode: true })
   }
