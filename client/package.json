@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "repository": "https://github.com/lierdakil/markco",
   "license": "MIT",
+  "scripts": {
+    "gulp": "gulp"
+  },
   "dependencies": {
     "file-saver": "^1.3.3",
     "react": "^15.6.1",
